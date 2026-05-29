@@ -246,7 +246,7 @@ El cambio de idioma entre **español** e **inglés** es dinámico y está dispon
 
 ### 6.5 Usuarios creados para pruebas
 
-Los siguientes usuarios son algunos de los disponibles en la base de datos de prueba.:
+Los siguientes usuarios son algunos de los disponibles en la base de datos de prueba:
 
 | Username | Email | Notas |
 |---|---|---|
