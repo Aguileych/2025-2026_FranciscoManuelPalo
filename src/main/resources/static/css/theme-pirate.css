@@ -1,0 +1,2406 @@
+@import url("https://fonts.googleapis.com/css2?family=Pirata+One&display=swap");
+
+@font-face {
+  font-family: "minesweeper";
+  src: url("mine-sweeper.otf") format("opentype");
+}
+
+/* ── Animaciones ─────────────────────────────────────────────── */
+@keyframes wave {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-5px) rotate(1deg);
+  }
+  75% {
+    transform: translateY(5px) rotate(-1deg);
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes treasure-glow {
+  0%,
+  100% {
+    box-shadow:
+      0 0 20px rgba(255, 215, 0, 0.5),
+      inset 0 0 20px rgba(255, 215, 0, 0.2);
+  }
+  50% {
+    box-shadow:
+      0 0 40px rgba(255, 215, 0, 0.8),
+      inset 0 0 30px rgba(255, 215, 0, 0.4);
+  }
+}
+
+@keyframes compass-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ── Reset ─────────────────────────────────────────────────── */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scrollbar-width: thin;
+  scrollbar-color: #8b4513 #2c1810;
+}
+
+/* ── Body — océano nocturno ─────────────────────────────────── */
+body {
+  font-family: "Pirata One", "Georgia", serif;
+  background: linear-gradient(180deg, #1a3a52 0%, #0d1f2d 50%, #06131c 100%);
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Olas en el fondo */
+body::before {
+  content: "";
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 200px;
+  background:
+    linear-gradient(transparent, rgba(13, 71, 107, 0.3)),
+    repeating-linear-gradient(
+      90deg,
+      transparent 0px,
+      rgba(13, 71, 107, 0.3) 50px,
+      transparent 100px
+    );
+  animation: wave 8s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Estrellas */
+body::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 70%;
+  background-image:
+    radial-gradient(2px 2px at 20% 30%, white, transparent),
+    radial-gradient(2px 2px at 60% 70%, white, transparent),
+    radial-gradient(1px 1px at 50% 50%, white, transparent),
+    radial-gradient(1px 1px at 80% 10%, white, transparent),
+    radial-gradient(2px 2px at 90% 60%, white, transparent),
+    radial-gradient(1px 1px at 33% 80%, white, transparent);
+  background-size: 200% 200%;
+  opacity: 0.7;
+  pointer-events: none;
+  z-index: 0;
+}
+
+a {
+  text-decoration: none;
+}
+a:visited {
+  color: inherit;
+}
+
+/* ── Retro bevel → pirata ────────────────────────────────────── */
+.retro-bevel-static {
+  border: 5px solid #d4af37;
+  background: linear-gradient(135deg, #2c1810 0%, #1a0f0a 100%);
+  box-shadow:
+    0 0 40px rgba(212, 175, 55, 0.5),
+    inset 0 0 40px rgba(0, 0, 0, 0.5);
+}
+
+.retro-bevel {
+  border: 3px solid #d4af37;
+  background: linear-gradient(135deg, #654321 0%, #3d2817 100%);
+  color: #f4e4c1;
+}
+
+.retro-bevel:active {
+  border-color: #8b7355;
+  transform: translateY(1px);
+}
+
+.retro-bevel-inset {
+  border: 3px solid #8b4513;
+  background: rgba(0, 0, 0, 0.35);
+  color: #f4e4c1;
+}
+
+/* ============================================================
+   DROPDOWNS — siempre por encima de todo
+   ============================================================ */
+.dropdown-container {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  min-width: 200px;
+  padding: 10px;
+
+  background-color: #2c1810 !important;
+  border: 3px solid #d4af37 !important;
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.9),
+    0 0 20px rgba(212, 175, 55, 0.3) !important;
+  z-index: 9999 !important;
+}
+
+.dropdown-content.show {
+  display: block;
+}
+
+.menu-dropdown {
+  top: 100%;
+  left: 0;
+  width: 250px;
+}
+
+.themes-dropdown {
+  top: 100%;
+  left: 0;
+  width: 100%;
+}
+
+.login-dropdown {
+  top: 100%;
+  right: 0;
+  width: 300px;
+  padding: 20px;
+}
+
+/* Opciones del menú */
+.menu-option {
+  padding: 14px 16px;
+  margin: 6px 0;
+  cursor: pointer;
+  text-align: left;
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 14px;
+  font-family: "Pirata One", "Georgia", serif;
+
+  background: linear-gradient(135deg, #654321 0%, #3d2817 100%);
+  color: #f4e4c1 !important;
+  border: 2px solid #8b4513 !important;
+  letter-spacing: 1px;
+  transition: all 0.2s;
+  position: relative;
+  padding-left: 35px;
+}
+
+.menu-option::before {
+  content: "⚓";
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+  opacity: 0.7;
+}
+
+.menu-option:hover {
+  background: linear-gradient(135deg, #8b4513 0%, #654321 100%) !important;
+  color: #ffd700 !important;
+  border-color: #d4af37 !important;
+  transform: translateX(4px);
+}
+
+.theme-option {
+  padding: 10px;
+  margin: 5px 0;
+  cursor: pointer;
+  text-align: center;
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 12px;
+  font-family: "Pirata One", "Georgia", serif;
+  background: linear-gradient(135deg, #654321 0%, #3d2817 100%);
+  color: #f4e4c1 !important;
+  border: 2px solid #8b4513 !important;
+  transition: all 0.2s;
+}
+
+.theme-option:hover {
+  background: linear-gradient(135deg, #8b4513 0%, #654321 100%) !important;
+  color: #ffd700 !important;
+  border-color: #d4af37 !important;
+}
+
+/* Login form en dropdown */
+.login-form h3,
+.register-form h3 {
+  color: #ffd700 !important;
+  font-family: "Pirata One", "Georgia", serif;
+  text-align: center;
+  margin-bottom: 15px;
+  font-size: 18px;
+  letter-spacing: 2px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+.login-form,
+.register-form {
+  display: none;
+}
+
+.login-form.active,
+.register-form.active {
+  display: block;
+}
+
+.form-input {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  background: #1a0f0a !important;
+  color: #f4e4c1 !important;
+  border: 2px solid #8b4513 !important;
+  font-family: "Georgia", serif !important;
+  font-size: 13px;
+}
+
+.form-input::placeholder {
+  color: #8b7355 !important;
+  font-style: italic;
+}
+
+.form-button {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  cursor: pointer;
+  text-align: center;
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 13px;
+  font-family: "Pirata One", "Georgia", serif !important;
+  background: linear-gradient(135deg, #654321 0%, #3d2817 100%) !important;
+  color: #ffd700 !important;
+  border: 3px solid #d4af37 !important;
+  letter-spacing: 1px;
+  transition: all 0.3s;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+}
+
+.form-button:hover {
+  background: linear-gradient(135deg, #8b4513 0%, #654321 100%) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(212, 175, 55, 0.3);
+}
+
+.switch-form-btn {
+  background: transparent;
+  border: none;
+  color: #d4af37 !important;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 11px;
+  margin-top: 10px;
+  font-family: "Georgia", serif !important;
+  font-style: italic;
+}
+
+/* Select de themes */
+.custom-select {
+  width: 100%;
+  padding: 10px;
+  background: linear-gradient(135deg, #654321 0%, #3d2817 100%);
+  border: 2px solid #d4af37 !important;
+  color: #ffd700;
+  font-family: "Pirata One", "Georgia", serif;
+  font-size: 13px;
+  font-weight: bold;
+  text-transform: uppercase;
+  cursor: pointer;
+  letter-spacing: 1px;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.custom-select:focus {
+  outline: none;
+  border-color: #ffd700 !important;
+}
+
+.custom-select option {
+  background: #3d2817;
+  color: #f4e4c1;
+}
+
+/* ============================================================
+   HEADER — mapa del tesoro con tachuelas
+   ============================================================ */
+header {
+  height: 17vh;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 25px;
+  position: relative;
+  z-index: 100;
+
+  background: linear-gradient(135deg, #8b4513 0%, #654321 100%);
+  padding: 25px;
+  border: 4px solid #d4af37;
+  border-radius: 10px;
+  box-shadow:
+    0 0 30px rgba(212, 175, 55, 0.4),
+    inset 0 0 30px rgba(0, 0, 0, 0.3);
+  margin-bottom: 10px;
+  position: relative;
+  background-image:
+    linear-gradient(
+      45deg,
+      transparent 48%,
+      rgba(139, 69, 19, 0.5) 49%,
+      rgba(139, 69, 19, 0.5) 51%,
+      transparent 52%
+    ),
+    linear-gradient(
+      -45deg,
+      transparent 48%,
+      rgba(139, 69, 19, 0.5) 49%,
+      rgba(139, 69, 19, 0.5) 51%,
+      transparent 52%
+    );
+  background-size: 20px 20px;
+}
+
+/* Tachuelas decorativas */
+header::before,
+header::after {
+  content: "";
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  background: radial-gradient(circle, #d4af37 0%, #8b7355 100%);
+  border-radius: 50%;
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.5);
+  top: 10px;
+  pointer-events: none;
+  z-index: 0;
+}
+header::before {
+  left: 10px;
+}
+header::after {
+  right: 10px;
+}
+
+/* ── Botón menú hamburguesa ──────────────────────────────────── */
+.menu-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 20px;
+  cursor: pointer;
+  min-width: 120px;
+  transition: all 0.3s;
+  position: relative;
+  z-index: 101;
+}
+
+.menu-btn:hover {
+  background: linear-gradient(135deg, #8b4513 0%, #654321 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+  border-color: #ffd700 !important;
+}
+
+.hamburger-icon {
+  width: 50px;
+  height: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  padding: 6px 0;
+}
+
+.hamburger-line {
+  width: 100%;
+  height: 5px;
+  background: #d4af37;
+  border-radius: 2px;
+  box-shadow: 0 0 4px rgba(212, 175, 55, 0.5);
+}
+
+.menu-text {
+  font-size: 13px;
+  font-weight: bold;
+  margin-top: 4px;
+  text-transform: uppercase;
+  color: #ffd700;
+  letter-spacing: 2px;
+  font-family: "Pirata One", "Georgia", serif;
+}
+
+/* ── Sección de título ───────────────────────────────────────── */
+.title-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  position: relative;
+}
+
+/* Ocultar la imagen minaTitle*/
+.title-section img {
+  display: none;
+}
+
+/* Calaveras antes y después del h1 */
+h1 {
+  font-size: 52px;
+  font-weight: bold;
+  color: #ffd700;
+  letter-spacing: 4px;
+  font-family: "Pirata One", "Georgia", serif;
+  text-shadow:
+    3px 3px 0 #8b4513,
+    -1px -1px 0 #654321,
+    2px 2px 10px rgba(255, 215, 0, 0.5);
+  animation: float 3s ease-in-out infinite;
+  text-align: center;
+}
+
+h1::before {
+  content: "☠ ";
+  font-size: 56px;
+  vertical-align: middle;
+  filter: drop-shadow(0 0 10px rgba(255, 0, 0, 0.5));
+}
+
+h1::after {
+  content: " ☠";
+  font-size: 56px;
+  vertical-align: middle;
+  filter: drop-shadow(0 0 10px rgba(255, 0, 0, 0.5));
+}
+
+.title-section::after {
+  content: var(--pirate-text);
+  display: block;
+  color: #f4e4c1;
+  font-size: 11px;
+  font-style: italic;
+  letter-spacing: 1px;
+  text-align: center;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+  font-family: "Georgia", serif;
+  margin-top: -2px;
+}
+
+/* ── Botones derecha del header ─────────────────────────────── */
+.header-right {
+  display: flex;
+  gap: 12px;
+  position: relative;
+  z-index: 101;
+}
+
+.header-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 16px;
+  cursor: pointer;
+  min-width: 90px;
+  transition: all 0.3s;
+
+  background: linear-gradient(135deg, #654321 0%, #3d2817 100%);
+  border: 3px solid #d4af37;
+  color: #ffd700;
+  font-family: "Pirata One", "Georgia", serif;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+}
+
+.header-btn:hover {
+  background: linear-gradient(135deg, #8b4513 0%, #654321 100%);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(212, 175, 55, 0.4);
+  border-color: #ffd700;
+}
+
+.header-btn:active {
+  transform: translateY(0);
+}
+
+.header-btn img {
+  display: none;
+}
+
+.header-right > .header-btn:first-child::before {
+  content: "🗺️";
+  font-size: 28px;
+  display: block;
+  text-align: center;
+  margin-bottom: 4px;
+  filter: drop-shadow(0 0 4px rgba(212, 175, 55, 0.4));
+}
+
+/* Botón de login*/
+.header-btn:has(span.btn-text:last-child) .btn-text ~ ::before {
+  content: "";
+}
+
+/* Dropdown container del login — icono */
+.dropdown-container .header-btn::before {
+  content: "🏴‍☠️";
+  font-size: 28px;
+  display: block;
+  text-align: center;
+  margin-bottom: 4px;
+}
+
+.btn-text {
+  font-size: 11px;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #ffd700;
+  letter-spacing: 2px;
+  font-family: "Pirata One", "Georgia", serif;
+}
+
+/* ============================================================
+   MAIN — área principal
+   ============================================================ */
+main {
+  background: linear-gradient(180deg, #0d2233 0%, #071520 100%);
+  border: 4px solid #d4af37;
+  height: 83vh;
+  display: flex;
+  padding: 20px;
+  padding-top: 5px;
+  padding-bottom: 0px;
+  gap: 20px;
+  justify-content: space-between;
+  /* align-items: stretch; */
+  align-items: normal;
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+}
+
+/* ============================================================
+   SIDEBAR 
+   ============================================================ */
+.sidebar {
+  width: 260px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  height: fit-content;
+
+  overflow: hidden;
+
+  background: linear-gradient(135deg, #d4a76a 0%, #c19a6b 100%);
+  border: 4px solid #8b4513;
+  padding: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  border-radius: 5px;
+  position: relative;
+  background-image: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(139, 69, 19, 0.1) 2px,
+    rgba(139, 69, 19, 0.1) 4px
+  );
+}
+
+/* Borde rasgado superior */
+.sidebar::before {
+  content: "";
+  position: absolute;
+  top: -4px;
+  left: 0;
+  right: 0;
+  height: 8px;
+  background:
+    linear-gradient(
+      45deg,
+      transparent 33.33%,
+      #8b4513 33.33%,
+      #8b4513 66.66%,
+      transparent 66.66%
+    ),
+    linear-gradient(
+      -45deg,
+      transparent 33.33%,
+      #8b4513 33.33%,
+      #8b4513 66.66%,
+      transparent 66.66%
+    );
+  background-size: 8px 8px;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Contenido interno con padding */
+.sidebar > * {
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+.sidebar > .custom-select,
+.sidebar > .retro-bevel-inset {
+  margin: 16px 16px 0 16px;
+  width: calc(100% - 32px);
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+/* Select de themes — dentro del sidebar */
+.sidebar .custom-select {
+  margin: 16px 16px 12px 16px !important;
+  width: calc(100% - 32px) !important;
+}
+
+/* Grid de dificultad */
+.difficulty-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 0 16px 16px 16px;
+  flex: 1;
+}
+
+/* Título del panel */
+.difficulty-grid::before {
+  content: var(--difficulty);
+  display: block;
+  background: #654321;
+  color: #ffd700;
+  padding: 12px;
+  font-weight: bold;
+  text-align: center;
+  font-size: 14px;
+  letter-spacing: 2px;
+  border: 2px solid #d4af37;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+  text-transform: uppercase;
+  font-family: "Pirata One", "Georgia", serif;
+  margin: 0 0 14px 0;
+  border-radius: 2px;
+}
+
+.difficulty-btn {
+  background: linear-gradient(135deg, #654321 0%, #3d2817 100%);
+  color: #f4e4c1;
+  border: 3px solid #8b4513 !important;
+  padding: 14px 14px 14px 38px;
+  cursor: pointer;
+  font-family: "Pirata One", "Georgia", serif;
+  font-weight: bold;
+  font-size: 14px;
+  transition: all 0.3s;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  position: relative;
+  text-align: left;
+  border-radius: 2px;
+  margin-bottom: 10px;
+}
+
+.difficulty-btn::before {
+  content: "⚓";
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 16px;
+  transition: all 0.3s;
+}
+
+.difficulty-btn:hover {
+  background: linear-gradient(135deg, #8b4513 0%, #654321 100%);
+  transform: translateX(5px);
+  border-color: #d4af37 !important;
+  color: #ffd700;
+}
+
+.difficulty-btn:active {
+  border-color: #8b7355 !important;
+  transform: translateX(2px);
+}
+
+/* ============================================================
+   GAME SECTION 
+   ============================================================ */
+.game-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  height: 100%;
+  overflow: hidden;
+}
+
+.game-panel {
+  background: linear-gradient(135deg, #2c1810 0%, #1a0f0a 100%);
+  border: 5px solid #d4af37 !important;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  box-shadow:
+    0 0 40px rgba(212, 175, 55, 0.5),
+    inset 0 0 40px rgba(0, 0, 0, 0.5);
+  border-radius: 10px;
+  animation: treasure-glow 3s ease-in-out infinite;
+  width: fit-content;
+  height: fit-content;
+}
+
+/* Game header — barra de estado */
+.game-header {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 18px 25px;
+  background: linear-gradient(135deg, #654321 0%, #3d2817 100%);
+  border: 3px solid #d4af37 !important;
+  border-radius: 5px;
+  gap: 20px;
+}
+
+/* Contadores*/
+.counter {
+  background: #000;
+  color: #ffd700;
+  font-weight: bold;
+  padding: 12px 28px;
+  font-family: monospace;
+  border: 3px solid #8b4513 !important;
+  letter-spacing: 5px;
+  font-size: 36px;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+  box-shadow:
+    0 0 20px rgba(255, 215, 0, 0.3),
+    inset 0 0 20px rgba(139, 69, 19, 0.3);
+  min-width: 130px;
+  text-align: center;
+  border-radius: 3px;
+}
+
+/* Reset btn*/
+.reset-btn {
+  width: 72px;
+  height: 72px;
+  background: radial-gradient(circle, #d4af37 0%, #8b7355 50%, #654321 100%);
+  border: 4px solid #d4af37 !important;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.5s ease;
+  box-shadow:
+    0 5px 20px rgba(0, 0, 0, 0.5),
+    inset 0 0 20px rgba(255, 215, 0, 0.2);
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+/* Ocultar imagen del face*/
+.reset-btn img {
+  display: none;
+}
+
+.reset-btn::before {
+  content: "N";
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #ff2222;
+  font-size: 13px;
+  font-weight: bold;
+  font-family: "Georgia", serif;
+  z-index: 2;
+}
+
+.reset-btn::after {
+  content: "⟲";
+  color: #3d2817;
+  font-size: 38px;
+  text-shadow: 0 0 8px rgba(255, 215, 0, 0.6);
+  line-height: 1;
+  margin-top: 4px;
+}
+
+.reset-btn:hover {
+  transform: rotate(360deg);
+  box-shadow:
+    0 8px 30px rgba(212, 175, 55, 0.6),
+    inset 0 0 30px rgba(255, 215, 0, 0.4);
+}
+
+/* ── Board ──────────────────────────────── */
+.board-container {
+  background: linear-gradient(135deg, #1a5f7a 0%, #0d3d4f 100%);
+  padding: 6px;
+  border: 4px solid #d4af37 !important;
+  box-shadow:
+    0 0 30px rgba(212, 175, 55, 0.4),
+    inset 0 0 30px rgba(0, 0, 0, 0.5);
+  border-radius: 5px;
+  overflow: auto;
+  width: fit-content;
+  height: fit-content;
+  align-self: center;
+}
+
+.tablero {
+  display: grid;
+  grid-template-columns: repeat(30, 22px);
+  gap: 2px;
+  background: #0a2a3a;
+  padding: 5px;
+  width: fit-content;
+  justify-content: center;
+}
+
+.cell,
+.casilla {
+  width: 22px;
+  height: 22px;
+  background: linear-gradient(135deg, #8b7355 0%, #6b5844 100%);
+  border: 2px outset #a0826d;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 13px;
+  transition: all 0.2s;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+  user-select: none;
+}
+
+.casilla img {
+  object-fit: fill;
+  height: inherit;
+}
+
+.cell:hover,
+.casilla:hover {
+  background: linear-gradient(135deg, #a08968 0%, #8b7355 100%);
+  transform: scale(1.05);
+  box-shadow: 0 4px 10px rgba(212, 175, 55, 0.4);
+}
+
+.cell:active,
+.casilla:active {
+  border-style: inset;
+  transform: scale(0.95);
+}
+
+.cell.revealed,
+.casilla.revealed {
+  background: linear-gradient(135deg, #1a5f7a 0%, #0d3d4f 100%);
+  border: 1px solid #0a4a5f;
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.5);
+}
+
+.cell.num-1,
+.casilla.num-1 {
+  color: #87ceeb;
+  text-shadow: 0 0 5px #87ceeb;
+}
+.cell.num-2,
+.casilla.num-2 {
+  color: #32cd32;
+  text-shadow: 0 0 5px #32cd32;
+}
+.cell.num-3,
+.casilla.num-3 {
+  color: #ffd700;
+  text-shadow: 0 0 5px #ffd700;
+}
+.cell.num-4,
+.casilla.num-4 {
+  color: #ff8c00;
+  text-shadow: 0 0 5px #ff8c00;
+}
+.cell.num-5,
+.casilla.num-5 {
+  color: #ff6347;
+  text-shadow: 0 0 5px #ff6347;
+}
+.cell.num-6,
+.casilla.num-6 {
+  color: #ff1493;
+  text-shadow: 0 0 5px #ff1493;
+}
+.cell.num-7,
+.casilla.num-7 {
+  color: #8b008b;
+  text-shadow: 0 0 5px #8b008b;
+}
+.cell.num-8,
+.casilla.num-8 {
+  color: #ffffff;
+  text-shadow: 0 0 5px #ffffff;
+}
+
+.casilla.mina {
+  background-color: #cc0000 !important;
+}
+
+/* ============================================================
+   SCOREBOARD 
+   ============================================================ */
+.scoreboard {
+  width: 300px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.score-panel {
+  background: linear-gradient(135deg, #3d2817 0%, #2c1810 100%);
+  border: 4px solid #8b4513 !important;
+  padding: 16px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+  border-radius: 5px;
+  position: relative;
+}
+
+/* Marco interior decorativo */
+.score-panel::before {
+  content: "";
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  bottom: 10px;
+  border: 2px solid #654321;
+  pointer-events: none;
+  border-radius: 3px;
+}
+
+/* score-header: contiene los filtros*/
+.score-header {
+  display: flex !important;
+  gap: 5px !important;
+  padding: 5px !important;
+  background: transparent !important;
+  border: 2px solid #d4af37 !important;
+  border-radius: 3px;
+  margin-bottom: 12px;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+  position: relative;
+  z-index: 2;
+}
+
+/* Título encima — via ::before en score-panel */
+.score-panel > .score-header::before {
+  display: none !important;
+}
+
+.score-panel::after {
+  display: none;
+}
+
+/* Título del scoreboard */
+.score-header::before {
+  display: none !important;
+  content: none !important;
+}
+
+/* Botones de filtro */
+.score-filter-btn {
+  flex: 1;
+  padding: 10px 5px !important;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 11px !important;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-family: "Pirata One", "Georgia", serif;
+  background: transparent !important;
+  color: rgba(212, 175, 55, 0.45) !important;
+  border: 0px !important;
+  border-radius: 2px;
+  transition: all 0.3s;
+}
+
+.score-filter-btn:hover {
+  color: #ffd700 !important;
+}
+
+.score-filter-btn.active {
+  color: #ffd700 !important;
+}
+
+/* Título encima de la lista */
+.score-list {
+  flex: 1;
+  overflow-y: auto;
+  background: #1a0f0a;
+  padding: 0;
+  border: 2px solid #654321;
+  border-radius: 3px;
+  position: relative;
+  z-index: 2;
+}
+
+.score-list::before {
+  content: var(--cap-leaderboard);
+  display: block;
+  background: linear-gradient(135deg, #654321 0%, #3d2817 100%);
+  color: #ffd700;
+  padding: 13px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 13px;
+  letter-spacing: 2px;
+  border-bottom: 2px solid #d4af37;
+  text-transform: uppercase;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+  font-family: "Pirata One", "Georgia", serif;
+}
+
+.score-list::-webkit-scrollbar {
+  width: 10px;
+}
+.score-list::-webkit-scrollbar-track {
+  background: #2c1810;
+  border: 1px solid #654321;
+}
+.score-list::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #8b4513 0%, #654321 100%);
+  border: 1px solid #d4af37;
+}
+
+.score-item {
+  height: 9%;
+  display: flex;
+  justify-content: space-between;
+  color: #f4e4c1;
+  font-weight: bold;
+  padding: 12px 10px;
+  border-bottom: 1px solid #3d2817;
+  font-size: 13px;
+  transition: all 0.3s;
+  font-family: "Georgia", serif;
+}
+
+.score-item:hover {
+  background: rgba(139, 69, 19, 0.3);
+  color: #ffd700;
+  padding-left: 22px;
+  border-left: 3px solid #d4af37;
+}
+
+.score-item::before {
+  content: "🏴‍☠️";
+  margin-right: 8px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.score-item:hover::before {
+  opacity: 1;
+}
+
+/* ============================================================
+   ACHIEVEMENTS
+   ============================================================ */
+.achi-section {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  margin: 0 20px;
+}
+
+.achi-panel {
+  background: linear-gradient(135deg, #2c1810 0%, #1a0f0a 100%);
+  border: 5px solid #d4af37 !important;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  border-radius: 10px;
+  box-shadow:
+    0 0 40px rgba(212, 175, 55, 0.5),
+    inset 0 0 40px rgba(0, 0, 0, 0.5);
+  animation: treasure-glow 3s ease-in-out infinite;
+}
+
+.achi-header {
+  background: linear-gradient(135deg, #654321 0%, #3d2817 100%);
+  color: #ffd700;
+  padding: 15px 20px;
+  text-align: center;
+  font-weight: bold;
+  letter-spacing: 3px;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+  border: 2px solid #d4af37 !important;
+  border-radius: 3px;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+  font-family: "Pirata One", "Georgia", serif;
+}
+
+.achi-header::before {
+  content: "⚔ ";
+  color: #ffd700;
+}
+.achi-header::after {
+  content: " ⚔";
+  color: #ffd700;
+}
+
+.achi-header h2 {
+  display: inline;
+  font-size: 18px;
+  color: #ffd700;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+  font-family: "Pirata One", "Georgia", serif;
+}
+
+.achi-container {
+  background: #1a0f0a;
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border: 2px solid #654321;
+  border-radius: 3px;
+}
+
+.achi-container::-webkit-scrollbar {
+  width: 10px;
+}
+.achi-container::-webkit-scrollbar-track {
+  background: #2c1810;
+  border: 1px solid #654321;
+}
+.achi-container::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #8b4513 0%, #654321 100%);
+  border: 1px solid #d4af37;
+}
+.achi-container::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #a05020 0%, #7a4520 100%);
+}
+
+.achievement-item {
+  background: linear-gradient(135deg, #654321 0%, #3d2817 100%);
+  border: 2px solid #8b4513 !important;
+  padding: 15px 20px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  min-height: 80px;
+  transition: all 0.3s;
+  border-radius: 4px;
+}
+
+.achievement-item:hover {
+  background: linear-gradient(135deg, #7a5530 0%, #4d2e18 100%);
+  border-color: #d4af37 !important;
+  transform: translateX(4px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+}
+
+.achi-icon {
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, #3d2817 0%, #2c1810 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  flex-shrink: 0;
+  border: 2px solid #8b4513;
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.5);
+}
+
+.achievement-item.unlocked .achi-icon {
+  background: radial-gradient(circle, #ffd700 0%, #b8860b 100%);
+  border: 2px solid #ffd700;
+  box-shadow:
+    0 0 12px rgba(255, 215, 0, 0.5),
+    inset 0 0 8px rgba(255, 255, 0, 0.2);
+}
+
+.achi-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.achi-title {
+  font-size: 14px;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #f4e4c1;
+  letter-spacing: 1px;
+  font-family: "Pirata One", "Georgia", serif;
+}
+
+.achievement-item.unlocked .achi-title {
+  color: #ffd700;
+  text-shadow: 0 0 6px rgba(255, 215, 0, 0.4);
+}
+
+.achi-description {
+  font-size: 11px;
+  color: #a08060;
+  line-height: 1.4;
+  font-style: italic;
+  font-family: "Georgia", serif;
+}
+
+.achi-points {
+  font-size: 20px;
+  font-weight: bold;
+  color: #d4af37;
+  font-family: "Georgia", serif;
+  min-width: 40px;
+  text-align: center;
+  text-shadow: 0 0 6px rgba(212, 175, 55, 0.4);
+}
+
+.achi-status {
+  padding: 6px 14px;
+  font-size: 10px;
+  font-weight: bold;
+  text-transform: uppercase;
+  background: rgba(0, 0, 0, 0.4);
+  color: #8b7355;
+  border: 1px solid #654321 !important;
+  border-radius: 2px;
+  flex-shrink: 0;
+  letter-spacing: 1px;
+  font-family: "Georgia", serif;
+}
+
+.achievement-item.unlocked .achi-status {
+  background: linear-gradient(135deg, #8b4513 0%, #654321 100%);
+  color: #ffd700;
+  border: 1px solid #d4af37 !important;
+  box-shadow: 0 0 8px rgba(255, 215, 0, 0.2);
+}
+
+/* ============================================================
+   SHOP 
+   ============================================================ */
+.shop-section {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  margin: 0 20px;
+}
+
+.shop-panel {
+  background: linear-gradient(135deg, #2c1810 0%, #1a0f0a 100%);
+  border: 5px solid #d4af37 !important;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  border-radius: 10px;
+  box-shadow:
+    0 0 40px rgba(212, 175, 55, 0.5),
+    inset 0 0 40px rgba(0, 0, 0, 0.5);
+  animation: treasure-glow 3s ease-in-out infinite;
+}
+
+.shop-header {
+  background: linear-gradient(135deg, #654321 0%, #3d2817 100%);
+  color: #ffd700;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: bold;
+  letter-spacing: 3px;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+  border: 2px solid #d4af37 !important;
+  border-radius: 3px;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+  font-family: "Pirata One", "Georgia", serif;
+}
+
+.shop-header h2 {
+  font-size: 18px;
+  color: #ffd700;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+  font-family: "Pirata One", "Georgia", serif;
+}
+
+.shop-currency {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #2c1810 0%, #1a0f0a 100%);
+  padding: 8px 15px;
+  border: 2px solid #d4af37 !important;
+  border-radius: 3px;
+  box-shadow:
+    inset 0 0 10px rgba(0, 0, 0, 0.3),
+    0 0 8px rgba(255, 215, 0, 0.2);
+}
+
+.currency-icon {
+  font-size: 20px;
+}
+
+.currency-amount {
+  font-size: 18px;
+  font-weight: bold;
+  color: #ffd700;
+  min-width: 60px;
+  text-align: center;
+  text-shadow: 0 0 8px rgba(255, 215, 0, 0.6);
+  font-family: monospace;
+}
+
+.currency-label {
+  font-size: 12px;
+  color: #d4af37;
+  font-weight: bold;
+  letter-spacing: 1px;
+  font-family: "Pirata One", "Georgia", serif;
+}
+
+.shop-container {
+  background: #1a0f0a;
+  flex: 1;
+  overflow-y: auto;
+  padding: 15px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 15px;
+  align-content: start;
+  border: 2px solid #654321;
+  border-radius: 3px;
+}
+
+.shop-container::-webkit-scrollbar {
+  width: 10px;
+}
+.shop-container::-webkit-scrollbar-track {
+  background: #2c1810;
+  border: 1px solid #654321;
+}
+.shop-container::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #8b4513 0%, #654321 100%);
+  border: 1px solid #d4af37;
+}
+.shop-container::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #a05020 0%, #7a4520 100%);
+}
+
+.shop-item {
+  background: linear-gradient(135deg, #654321 0%, #3d2817 100%);
+  border: 2px solid #8b4513 !important;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 220px;
+  transition: all 0.3s;
+  border-radius: 5px;
+}
+
+.shop-item:hover {
+  border-color: #d4af37 !important;
+  transform: translateY(-3px);
+  box-shadow:
+    0 8px 25px rgba(0, 0, 0, 0.5),
+    0 0 15px rgba(212, 175, 55, 0.2);
+}
+
+.shop-preview {
+  width: 100%;
+  height: 120px;
+  background: linear-gradient(135deg, #1a0f0a 0%, #0d0805 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 3px solid #8b4513 !important;
+  border-radius: 3px;
+  position: relative;
+  box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.5);
+}
+
+.shop-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.shop-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  padding: 4px 10px;
+  font-size: 9px;
+  font-weight: bold;
+  text-transform: uppercase;
+  background: linear-gradient(135deg, #8b4513 0%, #654321 100%);
+  color: #ffd700;
+  border: 1px solid #d4af37 !important;
+  border-radius: 2px;
+  letter-spacing: 1px;
+  font-family: "Georgia", serif;
+}
+
+.shop-badge.equipped {
+  background: linear-gradient(135deg, #0a3a6b 0%, #062550 100%);
+  color: #87ceeb;
+  border-color: #4c8bf5 !important;
+}
+
+.shop-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.shop-title {
+  font-size: 14px;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #ffd700;
+  text-align: center;
+  letter-spacing: 2px;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+  font-family: "Pirata One", "Georgia", serif;
+}
+
+.shop-description {
+  font-size: 10px;
+  color: #a08060;
+  line-height: 1.5;
+  text-align: center;
+  font-style: italic;
+  font-family: "Georgia", serif;
+}
+
+.shop-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding-top: 8px;
+  border-top: 1px solid #654321;
+}
+
+.shop-price {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #f4e4c1;
+  font-family: monospace;
+}
+
+.shop-price .currency-icon {
+  font-size: 18px;
+}
+
+.shop-price.free {
+  color: #32cd32;
+  text-shadow: 0 0 6px rgba(50, 205, 50, 0.4);
+}
+
+.shop-btn {
+  padding: 10px 18px;
+  font-size: 12px;
+  font-weight: bold;
+  text-transform: uppercase;
+  cursor: pointer;
+  font-family: "Pirata One", "Georgia", serif;
+  transition: all 0.3s;
+  white-space: nowrap;
+  letter-spacing: 1px;
+  border-radius: 2px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+}
+
+.shop-btn:hover:not(:disabled) {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(212, 175, 55, 0.4);
+}
+
+.shop-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.shop-btn.buy {
+  background: linear-gradient(135deg, #654321 0%, #3d2817 100%);
+  color: #ffd700;
+  border: 3px solid #d4af37 !important;
+}
+
+.shop-btn.buy:hover:not(:disabled) {
+  background: linear-gradient(135deg, #8b4513 0%, #654321 100%);
+}
+
+.shop-btn.buy:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.shop-btn.equip {
+  background: linear-gradient(135deg, #1a4a7a 0%, #0d2a4a 100%);
+  color: #87ceeb;
+  border: 3px solid #4c8bf5 !important;
+}
+
+.shop-btn.equip:hover:not(:disabled) {
+  background: linear-gradient(135deg, #2a5a8a 0%, #1a3a5a 100%);
+  box-shadow: 0 8px 20px rgba(76, 139, 245, 0.3);
+}
+
+.shop-btn.equipped {
+  background: rgba(0, 0, 0, 0.3);
+  color: #8b7355;
+  border: 3px solid #654321 !important;
+  cursor: default;
+}
+
+.waves-decoration {
+  height: 3px;
+  background: linear-gradient(90deg, transparent, #d4af37, transparent);
+  margin-top: 12px;
+}
+
+/* ============================================================
+   SCROLLBAR GLOBAL
+   ============================================================ */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #2c1810;
+  border: 1px solid #654321;
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #8b4513 0%, #654321 100%);
+  border: 1px solid #d4af37;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #a05020 0%, #7a4520 100%);
+}
+
+/* ============================================================
+   HISTORY 
+   ============================================================ */
+
+.hist-section {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  height: 100%;
+}
+
+.hist-panel {
+  background: linear-gradient(135deg, #2c1810 0%, #1a0f0a 100%);
+  border: 5px solid #d4af37 !important;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  height: 100%;
+  width: 100%;
+  border-radius: 10px;
+  box-shadow:
+    0 0 40px rgba(212, 175, 55, 0.5),
+    inset 0 0 40px rgba(0, 0, 0, 0.5);
+  animation: treasure-glow 3s ease-in-out infinite;
+}
+
+/* ── Cabecera del historial ──────────────────────────────────── */
+.hist-header {
+  background: linear-gradient(135deg, #654321 0%, #3d2817 100%);
+  border: 2px solid #d4af37 !important;
+  border-radius: 4px;
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.hist-header h2 {
+  font-size: 18px;
+  font-family: "Pirata One", "Georgia", serif;
+  color: #ffd700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+  white-space: nowrap;
+}
+
+.hist-header h2::before {
+  content: "⚔ ";
+}
+.hist-header h2::after {
+  content: " ⚔";
+}
+
+.hist-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.hist-filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.hist-filter-label {
+  font-size: 9px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #d4af37;
+  font-family: "Pirata One", "Georgia", serif;
+  padding-left: 2px;
+}
+
+.hist-filter-btns {
+  display: flex;
+  gap: 4px;
+}
+
+/* Botones de filtro de dificultad y resultado */
+.hist-filter-btn,
+.hist-result-btn {
+  padding: 7px 13px;
+  font-size: 11px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  font-family: "Pirata One", "Georgia", serif;
+  background: linear-gradient(135deg, #3d2817 0%, #2c1810 100%);
+  color: rgba(212, 175, 55, 0.5);
+  border: 2px solid #654321 !important;
+  border-radius: 2px;
+  transition: all 0.25s;
+}
+
+.hist-filter-btn:hover,
+.hist-result-btn:hover {
+  color: #ffd700;
+  border-color: #d4af37 !important;
+  background: linear-gradient(135deg, #654321 0%, #3d2817 100%);
+}
+
+.hist-filter-btn.active,
+.hist-result-btn.active {
+  background: linear-gradient(135deg, #8b4513 0%, #654321 100%);
+  color: #ffd700;
+  border-color: #d4af37 !important;
+  box-shadow: 0 0 8px rgba(255, 215, 0, 0.2);
+}
+
+/* Botón limpiar */
+.hist-clear-btn {
+  padding: 9px 18px;
+  font-size: 11px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  font-family: "Pirata One", "Georgia", serif;
+  background: linear-gradient(135deg, #5a0a0a 0%, #3d0606 100%);
+  color: #ff6b6b;
+  border: 2px solid #8b1a1a !important;
+  border-radius: 2px;
+  transition: all 0.25s;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5);
+  align-self: flex-end;
+}
+
+.hist-clear-btn:hover {
+  background: linear-gradient(135deg, #7a1010 0%, #5a0808 100%);
+  color: #ff9999;
+  border-color: #cc3333 !important;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(139, 0, 0, 0.4);
+}
+
+/* ── Cabecera de columnas ────────────────────────────────────── */
+.hist-col-header {
+  display: grid;
+  grid-template-columns: 130px 100px 110px 110px 1fr;
+  align-items: center;
+  padding: 10px 14px;
+  background: linear-gradient(135deg, #3d2817 0%, #2c1810 100%);
+  border: 2px solid #654321 !important;
+  border-radius: 3px;
+  gap: 8px;
+}
+
+.hist-col-header span {
+  font-size: 10px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #d4af37;
+  font-family: "Pirata One", "Georgia", serif;
+  text-align: center;
+}
+
+.hist-col-header span:first-child {
+  text-align: left;
+  padding-left: 4px;
+}
+
+/* ── Lista de partidas ───────────────────────────────────────── */
+.hist-list {
+  flex: 1;
+  overflow-y: auto;
+  background: #1a0f0a;
+  border: 2px solid #654321 !important;
+  border-radius: 3px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.hist-list::-webkit-scrollbar {
+  width: 10px;
+}
+.hist-list::-webkit-scrollbar-track {
+  background: #2c1810;
+  border: 1px solid #654321;
+}
+.hist-list::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #8b4513 0%, #654321 100%);
+  border: 1px solid #d4af37;
+}
+.hist-list::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #a05020 0%, #7a4520 100%);
+}
+
+/* Fila de partida */
+.hist-row {
+  display: grid;
+  grid-template-columns: 130px 100px 110px 110px 1fr;
+  align-items: center;
+  padding: 11px 14px;
+  border-bottom: 1px solid #3d2817;
+  gap: 8px;
+  transition: all 0.25s;
+  font-family: "Georgia", serif;
+}
+
+.hist-row:last-child {
+  border-bottom: none;
+}
+
+.hist-row:hover {
+  background: rgba(139, 69, 19, 0.25);
+  padding-left: 20px;
+  border-left: 3px solid #d4af37;
+}
+
+.hist-row--win {
+  border-left: 3px solid transparent;
+}
+.hist-row--loss {
+  border-left: 3px solid transparent;
+}
+
+.hist-row--win:hover {
+  border-left-color: #d4af37;
+}
+.hist-row--loss:hover {
+  border-left-color: #8b1a1a;
+}
+
+/* Columnas de la fila */
+.col-diff,
+.col-result,
+.col-duration,
+.col-mines,
+.col-date {
+  font-size: 12px;
+  color: #f4e4c1;
+  text-align: center;
+}
+
+.col-diff {
+  text-align: left;
+}
+.col-date {
+  color: #a08060;
+  font-size: 11px;
+  font-style: italic;
+}
+.col-duration {
+  font-family: monospace;
+  color: #d4af37;
+  letter-spacing: 1px;
+}
+
+/* Badges de dificultad */
+.diff-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  font-size: 10px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  border-radius: 2px;
+  font-family: "Pirata One", "Georgia", serif;
+  border: 1px solid transparent;
+}
+
+.diff-badge--easy {
+  background: linear-gradient(135deg, #1a4a1a 0%, #0d2e0d 100%);
+  color: #6dbb6d;
+  border-color: #2a6e2a;
+}
+
+.diff-badge--normal {
+  background: linear-gradient(135deg, #3d3010 0%, #2c2208 100%);
+  color: #d4af37;
+  border-color: #7a6620;
+}
+
+.diff-badge--hard {
+  background: linear-gradient(135deg, #5a0a0a 0%, #3d0606 100%);
+  color: #ff7070;
+  border-color: #8b2020;
+}
+
+/* Badges de resultado */
+.result-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  font-size: 10px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  border-radius: 2px;
+  font-family: "Pirata One", "Georgia", serif;
+  border: 1px solid transparent;
+}
+
+.result-badge--win {
+  background: linear-gradient(135deg, #1a4a1a 0%, #0d2e0d 100%);
+  color: #6dbb6d;
+  border-color: #2a6e2a;
+  box-shadow: 0 0 6px rgba(109, 187, 109, 0.2);
+}
+
+.result-badge--loss {
+  background: linear-gradient(135deg, #5a0a0a 0%, #3d0606 100%);
+  color: #ff7070;
+  border-color: #8b2020;
+  box-shadow: 0 0 6px rgba(255, 112, 112, 0.2);
+}
+
+/* Contador de minas restantes */
+.mines-counter {
+  display: inline-block;
+  background: #000 !important;
+  color: #ffd700;
+  font-family: monospace;
+  font-size: 14px;
+  font-weight: bold;
+  letter-spacing: 3px;
+  padding: 4px 10px;
+  border: 2px solid #654321 !important;
+  border-radius: 2px;
+  text-shadow: 0 0 6px rgba(255, 215, 0, 0.6);
+  box-shadow: inset 0 0 8px rgba(139, 69, 19, 0.3);
+}
+
+/* Mensaje de lista vacía */
+.hist-empty {
+  padding: 40px;
+  text-align: center;
+  color: #654321;
+  font-size: 16px;
+  font-family: "Pirata One", "Georgia", serif;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+
+.hist-empty::before {
+  content: "🏴‍☠️  ";
+}
+.hist-empty::after {
+  content: "  🏴‍☠️";
+}
+
+/* ── Estadísticas rápidas ────────────────────────────────────── */
+.hist-stats {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 12px 16px;
+  background: linear-gradient(135deg, #3d2817 0%, #2c1810 100%);
+  border: 2px solid #654321 !important;
+  border-radius: 3px;
+  min-height: 52px;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.stat-label {
+  font-size: 9px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #8b7355;
+  font-family: "Pirata One", "Georgia", serif;
+}
+
+.stat-value {
+  font-size: 14px;
+  font-weight: bold;
+  color: #f4e4c1;
+  font-family: monospace;
+  letter-spacing: 1px;
+}
+
+.stat-value--win {
+  color: #6dbb6d;
+  text-shadow: 0 0 6px rgba(109, 187, 109, 0.3);
+}
+.stat-value--loss {
+  color: #ff7070;
+  text-shadow: 0 0 6px rgba(255, 112, 112, 0.3);
+}
+
+.stat-sep {
+  color: #654321;
+  font-size: 18px;
+  line-height: 1;
+  user-select: none;
+}
+
+/* ============================================================
+   USER PROFILE
+   ============================================================ */
+
+.usr-section {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  height: 100%;
+}
+
+.usr-panel {
+  background: linear-gradient(135deg, #2c1810 0%, #1a0f0a 100%);
+  border: 5px solid #d4af37 !important;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  height: 100%;
+  width: 100%;
+  border-radius: 10px;
+  box-shadow:
+    0 0 40px rgba(212, 175, 55, 0.5),
+    inset 0 0 40px rgba(0, 0, 0, 0.5);
+  animation: treasure-glow 3s ease-in-out infinite;
+}
+
+/* ── Cabecera de perfil ─────────────────────────────────────── */
+.usr-header {
+  background: linear-gradient(135deg, #654321 0%, #3d2817 100%);
+  border: 2px solid #d4af37 !important;
+  border-radius: 4px;
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.usr-header h2 {
+  font-size: 18px;
+  font-family: "Pirata One", "Georgia", serif;
+  color: #ffd700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+.usr-header h2::before {
+  content: "☠ ";
+}
+.usr-header h2::after {
+  content: " ☠";
+}
+
+.usr-header-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.usr-avatar {
+  font-size: 36px;
+  width: 56px;
+  height: 56px;
+  background: radial-gradient(circle, #ffd700 0%, #b8860b 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid #d4af37;
+  box-shadow:
+    0 0 14px rgba(255, 215, 0, 0.5),
+    inset 0 0 8px rgba(255, 255, 0, 0.2);
+  flex-shrink: 0;
+}
+
+.usr-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.usr-name-display {
+  font-size: 16px;
+  font-weight: bold;
+  color: #ffd700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-family: "Pirata One", "Georgia", serif;
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.7);
+}
+
+.usr-joined {
+  font-size: 10px;
+  color: #a08060;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-family: "Georgia", serif;
+  font-style: italic;
+}
+
+/* ── Cuerpo: tres tarjetas ───────────────────────────────────── */
+.usr-body {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  overflow: hidden;
+}
+
+/* Tarjeta individual */
+.usr-card {
+  background: rgba(0, 0, 0, 0.3);
+  border: 2px solid #654321 !important;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.usr-card--danger {
+  border-color: #8b1a1a !important;
+  background: rgba(80, 10, 10, 0.2);
+}
+
+/* Título de tarjeta */
+.usr-card-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: linear-gradient(135deg, #654321 0%, #3d2817 100%);
+  border: none;
+  border-bottom: 2px solid #d4af37;
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #ffd700;
+  font-family: "Pirata One", "Georgia", serif;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.4);
+}
+
+.usr-card-title--danger {
+  background: linear-gradient(135deg, #5a0a0a 0%, #3d0606 100%);
+  border-bottom-color: #8b2020;
+  color: #ff8080;
+}
+
+.usr-card-icon {
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+/* Contenido de la tarjeta */
+.usr-card-content {
+  flex: 1;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+}
+
+.usr-card-content::-webkit-scrollbar {
+  width: 8px;
+}
+.usr-card-content::-webkit-scrollbar-track {
+  background: #1a0f0a;
+}
+.usr-card-content::-webkit-scrollbar-thumb {
+  background: #654321;
+  border: 1px solid #d4af37;
+}
+
+/* Etiquetas */
+.usr-label {
+  font-size: 9px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #d4af37;
+  font-family: "Pirata One", "Georgia", serif;
+  margin-top: 4px;
+}
+
+/* Campo de solo lectura */
+.usr-field-readonly {
+  padding: 9px 12px;
+  background: rgba(0, 0, 0, 0.4) !important;
+  border: 2px solid #654321 !important;
+  color: #f4e4c1;
+  font-size: 13px;
+  font-family: monospace;
+  letter-spacing: 1px;
+  border-radius: 2px;
+}
+
+/* Inputs de texto/password */
+.usr-input {
+  width: 100%;
+  padding: 9px 12px;
+  background: #1a0f0a !important;
+  color: #f4e4c1 !important;
+  border: 2px solid #8b4513 !important;
+  font-family: "Georgia", serif;
+  font-size: 12px;
+  border-radius: 2px;
+  transition: border-color 0.2s;
+}
+
+.usr-input:focus {
+  outline: none;
+  border-color: #d4af37 !important;
+  box-shadow: 0 0 8px rgba(212, 175, 55, 0.2);
+}
+
+.usr-input::placeholder {
+  color: #654321;
+  font-style: italic;
+}
+
+/* Hint de texto */
+.usr-hint {
+  font-size: 9px;
+  color: #8b7355;
+  font-style: italic;
+  font-family: "Georgia", serif;
+  letter-spacing: 0.5px;
+}
+
+/* Botón primario */
+.usr-btn {
+  padding: 10px 16px;
+  font-size: 12px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  font-family: "Pirata One", "Georgia", serif;
+  border-radius: 2px;
+  transition: all 0.3s;
+  margin-top: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.usr-btn--primary {
+  background: linear-gradient(135deg, #654321 0%, #3d2817 100%);
+  color: #ffd700;
+  border: 3px solid #d4af37 !important;
+}
+
+.usr-btn--primary:hover {
+  background: linear-gradient(135deg, #8b4513 0%, #654321 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(212, 175, 55, 0.3);
+}
+
+.usr-btn--primary:active {
+  transform: translateY(0);
+}
+
+.usr-btn--danger {
+  background: linear-gradient(135deg, #5a0a0a 0%, #3d0606 100%);
+  color: #ff8080;
+  border: 3px solid #8b2020 !important;
+}
+
+.usr-btn--danger:hover {
+  background: linear-gradient(135deg, #7a1010 0%, #5a0808 100%);
+  color: #ffaaaa;
+  border-color: #cc3333 !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(139, 0, 0, 0.4);
+}
+
+.usr-btn--danger:active {
+  transform: translateY(0);
+}
+
+/* Aviso de peligro */
+.usr-danger-warning {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px !important;
+  background: rgba(80, 10, 10, 0.4) !important;
+  border: 2px solid #8b1a1a !important;
+  border-radius: 3px;
+  margin-bottom: 4px;
+}
+
+.usr-warning-icon {
+  font-size: 22px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.usr-warning-text {
+  font-size: 11px;
+  color: #ff9090;
+  line-height: 1.6;
+  font-family: "Georgia", serif;
+  font-style: italic;
+}
+
+.usr-warning-text strong {
+  color: #ff6060;
+  font-style: normal;
+}
+
+/* Toast de feedback */
+.usr-toast {
+  display: none;
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  padding: 12px 28px;
+  font-size: 13px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-family: "Pirata One", "Georgia", serif;
+  border-radius: 3px;
+  z-index: 99999;
+  opacity: 0;
+  transition:
+    opacity 0.3s,
+    transform 0.3s;
+  pointer-events: none;
+  background: linear-gradient(135deg, #654321 0%, #3d2817 100%);
+  color: #ffd700;
+  border: 3px solid #d4af37 !important;
+  box-shadow:
+    0 8px 30px rgba(0, 0, 0, 0.8),
+    0 0 15px rgba(212, 175, 55, 0.3);
+}
+
+.usr-toast--visible {
+  display: block;
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.usr-toast--ok {
+  background: linear-gradient(135deg, #1a4a1a 0%, #0d2e0d 100%);
+  color: #6dbb6d;
+  border-color: #2a6e2a !important;
+  box-shadow:
+    0 8px 30px rgba(0, 0, 0, 0.8),
+    0 0 15px rgba(109, 187, 109, 0.3);
+}
+
+.usr-toast--err {
+  background: linear-gradient(135deg, #5a0a0a 0%, #3d0606 100%);
+  color: #ff8080;
+  border-color: #8b2020 !important;
+  box-shadow:
+    0 8px 30px rgba(0, 0, 0, 0.8),
+    0 0 15px rgba(139, 0, 0, 0.4);
+}
+
+#sessionUsername {
+  color: #ffd700;
+}

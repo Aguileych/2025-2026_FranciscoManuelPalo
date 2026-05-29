@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MINESWEEPER</title>
+    <link rel="icon" type="image/png" href="./img/mine.png" />
+    <link
+      id="theme-stylesheet"
+      rel="stylesheet"
+      href="./css/theme-classic.css"
+    />
+  </head>
+  <body>
+    <header>
+      <div class="dropdown-container">
+        <div
+          class="menu-btn retro-bevel"
+          onclick="toggleDropdown('menuDropdown')"
+        >
+          <div class="hamburger-icon">
+            <div class="hamburger-line"></div>
+            <div class="hamburger-line"></div>
+            <div class="hamburger-line"></div>
+          </div>
+          <span class="menu-text">Menu</span>
+        </div>
+        <div id="menuDropdown" class="dropdown-content menu-dropdown">
+          <div class="menu-option retro-bevel">
+            <a href="minesweeper.html" data-i18n="menu.game">Game</a>
+          </div>
+          <div class="menu-option retro-bevel">
+            <a href="achievements.html" data-i18n="menu.achievements"
+              >Achievements</a
+            >
+          </div>
+          <div class="menu-option retro-bevel">
+            <a href="usuario.html" data-i18n="menu.user">User</a>
+          </div>
+          <div class="menu-option retro-bevel">
+            <a href="shop.html" data-i18n="menu.shop">Shop</a>
+          </div>
+          <div class="menu-option retro-bevel">
+            <a href="historial.html" data-i18n="menu.history">History</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="title-section">
+        <h1>MINESWEEPER</h1>
+        <img src="img/mine.png" alt="" />
+      </div>
+
+      <div class="header-right">
+        <div
+          class="header-btn retro-bevel"
+          onclick="
+            cargarTienda();
+            cambiarIdioma();
+          "
+        >
+          <img src="img/unionjack.webp" alt="" id="langFlag" />
+          <span class="btn-text" id="langText" data-i18n="header.language"
+            >English</span
+          >
+        </div>
+
+        <div class="dropdown-container">
+          <div
+            class="header-btn retro-bevel"
+            onclick="toggleDropdown('loginDropdown')"
+          >
+            <img src="img/face.webp" alt="" />
+            <span id="loginBtnText" class="btn-text" data-i18n="header.login"
+              >Login</span
+            >
+          </div>
+          <div id="loginDropdown" class="dropdown-content login-dropdown">
+            <div class="login-form active" id="loginForm">
+              <h3
+                style="text-align: center; margin-bottom: 15px; font-size: 14px"
+                data-i18n="auth.loginTitle"
+              >
+                LOGIN
+              </h3>
+              <input
+                type="email"
+                id="loginEmail"
+                class="form-input retro-bevel-inset"
+                data-i18n-placeholder="auth.emailPlaceholder"
+                placeholder="Email"
+              />
+              <input
+                type="password"
+                id="loginPassword"
+                class="form-input retro-bevel-inset"
+                data-i18n-placeholder="auth.passwordPlaceholder"
+                placeholder="Password"
+              />
+              <p
+                id="loginError"
+                style="color: red; font-size: 12px; display: none"
+              ></p>
+              <button
+                class="form-button retro-bevel"
+                onclick="login()"
+                data-i18n="auth.loginBtn"
+              >
+                Log in
+              </button>
+              <button
+                class="switch-form-btn"
+                onclick="switchForm('register')"
+                data-i18n="auth.signupLink"
+              >
+                Sign up
+              </button>
+            </div>
+
+            <div class="register-form" id="registerForm">
+              <h3
+                style="text-align: center; margin-bottom: 15px; font-size: 14px"
+                data-i18n="auth.registerTitle"
+              >
+                Sign in
+              </h3>
+              <input
+                type="email"
+                id="regEmail"
+                class="form-input retro-bevel-inset"
+                data-i18n-placeholder="auth.emailRegPlaceholder"
+                placeholder="Correo"
+              />
+              <input
+                type="text"
+                id="regUsername"
+                class="form-input retro-bevel-inset"
+                data-i18n-placeholder="auth.usernamePlaceholder"
+                placeholder="Nombre"
+              />
+              <input
+                type="password"
+                id="regPassword"
+                class="form-input retro-bevel-inset"
+                data-i18n-placeholder="auth.passRegPlaceholder"
+                placeholder="Contraseña"
+              />
+              <p
+                id="regError"
+                style="color: red; font-size: 12px; display: none"
+              ></p>
+              <button
+                class="form-button retro-bevel"
+                onclick="registro()"
+                data-i18n="auth.registerBtn"
+              >
+                Registrarse
+              </button>
+              <button
+                class="switch-form-btn"
+                onclick="switchForm('login')"
+                data-i18n="auth.loginLink"
+              >
+                ¿Ya tienes cuenta?
+              </button>
+            </div>
+
+            <div
+              id="sessionPanel"
+              style="display: none; padding: 16px; text-align: center"
+            >
+              <p
+                id="sessionUsername"
+                style="font-weight: bold; margin-bottom: 12px"
+              ></p>
+              <button
+                class="form-button retro-bevel"
+                onclick="logout()"
+                data-i18n="auth.logout"
+              >
+                Cerrar sesión
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="shop-section">
+        <div class="shop-panel retro-bevel-static">
+          <div class="shop-header retro-bevel-inset">
+            <h2 data-i18n="shop.title">COSMETIC SHOP</h2>
+            <div class="shop-currency">
+              <span class="currency-amount" id="userCoins">0</span>
+              <span class="currency-label" data-i18n="shop.coins">COINS</span>
+            </div>
+          </div>
+          <div class="shop-container" id="shopContainer"></div>
+        </div>
+      </section>
+    </main>
+
+    <script src="./js/navegacion.js"></script>
+    <script src="./js/login.js"></script>
+    <script src="./js/i18n.js"></script>
+    <script>
+      requiereLogin();
+
+      const usuarioInicial = getUsuario();
+      if (usuarioInicial?.temaEquipado) {
+        document.getElementById("theme-stylesheet").href =
+          `./css/${usuarioInicial.temaEquipado}`;
+      }
+
+      const TEMA_CLASSIC = { estilo: "theme-classic.css", nombre: "CLASSIC" };
+
+      let cosmeticos = [];
+      let cosmeticosUsuario = [];
+
+      function classicEquipado() {
+        const usuario = getUsuario();
+        const otroEquipado = cosmeticosUsuario.some((uc) => uc.equipado);
+        if (otroEquipado) return false;
+        return (
+          (usuario?.temaEquipado ?? TEMA_CLASSIC.estilo) === TEMA_CLASSIC.estilo
+        );
+      }
+
+      async function cargarTienda() {
+        const usuario = getUsuario();
+
+        const resCosmeticos = await fetch("/api/cosmeticos");
+        cosmeticos = (await resCosmeticos.json()).filter(
+          (c) => c.estilo !== TEMA_CLASSIC.estilo,
+        );
+
+        const resUC = await fetch(
+          `/api/usuario-cosmeticos/jugador/${usuario.id}`,
+        );
+        cosmeticosUsuario = await resUC.json();
+
+        document.getElementById("userCoins").textContent = usuario.puntosLogro;
+
+        const equipado = cosmeticosUsuario.find((uc) => uc.equipado);
+        if (equipado) {
+          aplicarTema(equipado.cosmeticoEstilo);
+        } else if (usuario.temaEquipado) {
+          aplicarTema(usuario.temaEquipado);
+        }
+
+        renderShop();
+      }
+
+      function renderShop() {
+        const container = document.getElementById("shopContainer");
+        container.innerHTML = "";
+        const usuario = getUsuario();
+
+        // Classic
+        const classicActivo = classicEquipado();
+        const classicItem = document.createElement("div");
+        classicItem.className = "shop-item retro-bevel";
+        classicItem.innerHTML = `
+          <div class="shop-preview retro-bevel-inset">
+            <img src="./img/cosmeticos/classic.png" style="width:100%; height:100%; object-fit:contain;">
+            <div class="shop-badge ${classicActivo ? "equipped" : ""}">${classicActivo ? t("shop.equipped") : t("shop.owned")}</div>
+          </div>
+          <div class="shop-info">
+            <div class="shop-title">${t("game.classic")}</div>
+          </div>
+          <div class="shop-footer">
+            <div class="shop-price free">${t("shop.free")}</div>
+            ${
+              classicActivo
+                ? `<button class="shop-btn equipped retro-bevel" disabled>${t("shop.equipped")}</button>`
+                : `<button class="shop-btn equip retro-bevel" onclick="equiparClassic()">${t("shop.equip")}</button>`
+            }
+          </div>
+        `;
+        container.appendChild(classicItem);
+
+        cosmeticos.forEach((cosmetico) => {
+          const ucItem = cosmeticosUsuario.find(
+            (uc) => uc.cosmeticoId === cosmetico.id,
+          );
+          const comprado = ucItem !== undefined;
+          const equipado = ucItem?.equipado ?? false;
+          const gratis = cosmetico.precioPuntos === 0;
+          const puedePagar = usuario.puntosLogro >= cosmetico.precioPuntos;
+
+          let buttonHTML = "";
+          let badgeHTML = "";
+
+          if (comprado) {
+            if (equipado) {
+              buttonHTML = `<button class="shop-btn equipped retro-bevel" disabled>${t("shop.equipped")}</button>`;
+              badgeHTML = `<div class="shop-badge equipped">${t("shop.equipped")}</div>`;
+            } else {
+              buttonHTML = `<button class="shop-btn equip retro-bevel" onclick="equipar(${cosmetico.id})">${t("shop.equip")}</button>`;
+              badgeHTML = `<div class="shop-badge">${t("shop.owned")}</div>`;
+            }
+          } else {
+            buttonHTML = `<button class="shop-btn buy retro-bevel"
+              onclick="comprar(${cosmetico.id})"
+              ${!puedePagar && !gratis ? "disabled" : ""}>
+              ${t("shop.buy")}
+            </button>`;
+          }
+          const preview = cosmetico.imagenUrl
+            ? `<img src="${cosmetico.imagenUrl}" style="width:100%; height:100%; object-fit:contain;">`
+            : `<span style="font-size:48px">🎨</span>`;
+          const item = document.createElement("div");
+          item.className = "shop-item retro-bevel";
+          item.innerHTML = `
+            <div class="shop-preview retro-bevel-inset">
+              ${preview}
+              ${badgeHTML}
+            </div>
+            <div class="shop-info">
+              <div class="shop-title">${cosmetico.nombre}</div>
+            </div>
+            <div class="shop-footer">
+              <div class="shop-price ${gratis ? "free" : ""}">
+                ${
+                  gratis
+                    ? t("shop.free")
+                    : `<span >${cosmetico.precioPuntos}</span>${t("shop.coins")}`
+                }
+              </div>
+              ${buttonHTML}
+            </div>
+          `;
+          container.appendChild(item);
+        });
+      }
+
+      async function comprar(cosmeticoId) {
+        const usuario = getUsuario();
+        const res = await fetch("/api/usuario-cosmeticos/comprar", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ jugadorId: usuario.id, cosmeticoId }),
+        });
+        const datos = await res.json();
+        if (!res.ok) {
+          alert(tError(datos.error));
+          return;
+        }
+
+        const usuarioActualizado = {
+          ...usuario,
+          puntosLogro: datos.puntosLogro,
+        };
+        sessionStorage.setItem("usuario", JSON.stringify(usuarioActualizado));
+        document.getElementById("userCoins").textContent = datos.puntosLogro;
+        await cargarTienda();
+      }
+
+      async function equiparClassic() {
+        const usuario = getUsuario();
+        const res = await fetch("/api/usuario-cosmeticos/equipar", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            jugadorId: usuario.id,
+            estilo: TEMA_CLASSIC.estilo,
+          }),
+        });
+        const datos = await res.json();
+        if (!res.ok) {
+          alert(tError(datos.error));
+          return;
+        }
+
+        const usuarioActualizado = { ...usuario, temaEquipado: datos.estilo };
+        sessionStorage.setItem("usuario", JSON.stringify(usuarioActualizado));
+        aplicarTema(datos.estilo);
+        await cargarTienda();
+      }
+
+      async function equipar(cosmeticoId) {
+        const usuario = getUsuario();
+        const res = await fetch("/api/usuario-cosmeticos/equipar", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ jugadorId: usuario.id, cosmeticoId }),
+        });
+        const datos = await res.json();
+        if (!res.ok) {
+          alert(tError(datos.error));
+          return;
+        }
+
+        const usuarioActualizado = { ...usuario, temaEquipado: datos.estilo };
+        sessionStorage.setItem("usuario", JSON.stringify(usuarioActualizado));
+        aplicarTema(datos.estilo);
+        await cargarTienda();
+      }
+
+      function aplicarTema(estilo) {
+        document.getElementById("theme-stylesheet").href = `./css/${estilo}`;
+      }
+
+      window.addEventListener("DOMContentLoaded", async () => {
+        await esperarTraducciones();
+        cargarTienda();
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,2275 @@
+@import url("https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap");
+
+/* ── Animaciones ─────────────────────────────────────────────── */
+@keyframes scanline {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100vh);
+  }
+}
+
+@keyframes glow {
+  0%,
+  100% {
+    text-shadow:
+      0 0 10px #00ff00,
+      0 0 20px #00ff00;
+  }
+  50% {
+    text-shadow:
+      0 0 20px #00ff00,
+      0 0 40px #00ff00,
+      0 0 60px #00ff00;
+  }
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+@keyframes flicker {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  92% {
+    opacity: 1;
+  }
+  93% {
+    opacity: 0.85;
+  }
+  94% {
+    opacity: 1;
+  }
+  96% {
+    opacity: 0.9;
+  }
+  97% {
+    opacity: 1;
+  }
+}
+
+@keyframes pixel-in {
+  from {
+    opacity: 0;
+    transform: scaleY(0);
+  }
+  to {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+}
+
+@keyframes cursor-blink {
+  50% {
+    border-right-color: transparent;
+  }
+}
+
+/* ── Reset ─────────────────────────────────────────────────── */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scrollbar-width: thin;
+  scrollbar-color: #00ff00 #0a0a0a;
+}
+
+/* ── Body — CRT terminal ─────────────────────────────────────── */
+body {
+  font-family: "Share Tech Mono", "Courier New", monospace;
+  background: #0a0a0a;
+  color: #00ff00;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  position: relative;
+  animation: flicker 8s infinite;
+}
+
+/* Línea de scanline animada */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(transparent, rgba(0, 255, 0, 0.4), transparent);
+  animation: scanline 5s linear infinite;
+  pointer-events: none;
+  z-index: 9000;
+}
+
+/* CRT scanlines estáticas */
+body::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 255, 0, 0.03) 0px,
+    transparent 1px,
+    transparent 2px,
+    rgba(0, 255, 0, 0.03) 3px
+  );
+  pointer-events: none;
+  z-index: 8999;
+}
+
+a {
+  text-decoration: none;
+}
+a:visited {
+  color: inherit;
+}
+/* ── Clases retro-bevel — mapeadas a CRT ───────────────────── */
+.retro-bevel-static {
+  background: #0a0a0a;
+  border: 3px solid #00ff00;
+  box-shadow:
+    0 0 20px rgba(0, 255, 0, 0.35),
+    inset 0 0 20px rgba(0, 255, 0, 0.07);
+}
+
+.retro-bevel {
+  background: #111;
+  border: 2px solid #00ff00;
+  color: #00ff00;
+  box-shadow: 0 0 8px rgba(0, 255, 0, 0.25);
+}
+
+.retro-bevel:active {
+  background: rgba(0, 255, 0, 0.15);
+  box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+}
+
+.retro-bevel-inset {
+  background: #000;
+  border: 2px solid #006600;
+  color: #00ff00;
+  box-shadow: inset 0 0 10px rgba(0, 255, 0, 0.1);
+}
+
+/* ============================================================
+   DROPDOWNS — sobre todo, estilo terminal
+   ============================================================ */
+.dropdown-container {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  min-width: 200px;
+  padding: 10px;
+  background-color: #0d0d0d !important;
+  border: 2px solid #00ff00 !important;
+  box-shadow:
+    0 0 30px rgba(0, 255, 0, 0.5),
+    inset 0 0 15px rgba(0, 255, 0, 0.05) !important;
+  z-index: 9999 !important;
+}
+
+.dropdown-content.show {
+  display: block;
+  animation: pixel-in 0.1s ease-out;
+}
+
+.menu-dropdown {
+  top: 100%;
+  left: 0;
+  width: 250px;
+}
+
+.themes-dropdown {
+  top: 100%;
+  left: 0;
+  width: 100%;
+}
+
+.login-dropdown {
+  top: 100%;
+  right: 0;
+  width: 300px;
+  padding: 20px;
+}
+
+/* Opciones del menú */
+.menu-option {
+  padding: 12px 14px 12px 30px;
+  margin: 4px 0;
+  cursor: pointer;
+  font-family: "Share Tech Mono", "Courier New", monospace;
+  font-size: 13px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  background: transparent;
+  color: #00ff00 !important;
+  border: 1px solid #003300 !important;
+  transition: all 0.15s;
+  position: relative;
+  box-shadow: none;
+}
+
+.menu-option::before {
+  content: ">";
+  position: absolute;
+  left: 10px;
+  color: #00ff00;
+  opacity: 0.5;
+  transition: all 0.15s;
+}
+
+.menu-option:hover {
+  background: rgba(0, 255, 0, 0.1) !important;
+  color: #00ff00 !important;
+  border-color: #00ff00 !important;
+  padding-left: 36px;
+  box-shadow: 0 0 10px rgba(0, 255, 0, 0.3) !important;
+}
+
+.menu-option:hover::before {
+  opacity: 1;
+  left: 14px;
+}
+
+.theme-option {
+  padding: 10px;
+  margin: 4px 0;
+  cursor: pointer;
+  text-align: center;
+  font-family: "Share Tech Mono", "Courier New", monospace;
+  font-size: 12px;
+  font-weight: bold;
+  text-transform: uppercase;
+  background: transparent;
+  color: #00ff00 !important;
+  border: 1px solid #003300 !important;
+  transition: all 0.15s;
+}
+
+.theme-option:hover {
+  background: rgba(0, 255, 0, 0.1) !important;
+  border-color: #00ff00 !important;
+}
+
+/* Login form */
+.login-form h3,
+.register-form h3 {
+  color: #00ff00 !important;
+  font-family: "Share Tech Mono", "Courier New", monospace;
+  text-align: center;
+  margin-bottom: 15px;
+  font-size: 14px;
+  letter-spacing: 3px;
+  text-shadow: 0 0 10px #00ff00;
+}
+
+.login-form h3::before {
+  content: "[ ";
+}
+.login-form h3::after {
+  content: " ]";
+}
+.register-form h3::before {
+  content: "[ ";
+}
+.register-form h3::after {
+  content: " ]";
+}
+
+.login-form,
+.register-form {
+  display: none;
+}
+
+.login-form.active,
+.register-form.active {
+  display: block;
+}
+
+.form-input {
+  width: 100%;
+  padding: 10px;
+  margin: 8px 0;
+  background: #000 !important;
+  color: #00ff00 !important;
+  border: 1px solid #006600 !important;
+  font-family: "Share Tech Mono", "Courier New", monospace !important;
+  font-size: 12px;
+  letter-spacing: 1px;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #00ff00 !important;
+  box-shadow: 0 0 10px rgba(0, 255, 0, 0.4);
+}
+
+.form-input::placeholder {
+  color: #006600 !important;
+}
+
+.form-button {
+  width: 100%;
+  padding: 10px;
+  margin: 8px 0;
+  cursor: pointer;
+  font-family: "Share Tech Mono", "Courier New", monospace !important;
+  font-size: 12px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  background: transparent !important;
+  color: #00ff00 !important;
+  border: 2px solid #00ff00 !important;
+  transition: all 0.2s;
+  box-shadow: 0 0 8px rgba(0, 255, 0, 0.2);
+}
+
+.form-button:hover {
+  background: #00ff00 !important;
+  color: #000 !important;
+  box-shadow: 0 0 20px rgba(0, 255, 0, 0.6);
+}
+
+.switch-form-btn {
+  background: transparent;
+  border: none;
+  color: #006600 !important;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 11px;
+  margin-top: 8px;
+  font-family: "Share Tech Mono", "Courier New", monospace !important;
+  letter-spacing: 1px;
+  transition: color 0.2s;
+}
+
+.switch-form-btn:hover {
+  color: #00ff00 !important;
+}
+
+/* Select de themes */
+.custom-select {
+  width: 100%;
+  padding: 10px;
+  background: #000;
+  border: 2px solid #00ff00 !important;
+  color: #00ff00;
+  font-family: "Share Tech Mono", "Courier New", monospace;
+  font-size: 12px;
+  font-weight: bold;
+  text-transform: uppercase;
+  cursor: pointer;
+  letter-spacing: 1px;
+  box-shadow: 0 0 8px rgba(0, 255, 0, 0.2);
+}
+
+.custom-select:focus {
+  outline: none;
+  box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+}
+
+.custom-select option {
+  background: #0d0d0d;
+  color: #00ff00;
+}
+
+/* ============================================================
+   HEADER — terminal de mando
+   ============================================================ */
+header {
+  background: #111;
+  border: 3px solid #00ff00;
+  height: 17vh;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 25px;
+  position: relative;
+  z-index: 100;
+  box-shadow:
+    0 0 30px rgba(0, 255, 0, 0.4),
+    inset 0 0 30px rgba(0, 255, 0, 0.05);
+}
+
+/* Línea de terminal en la parte superior del header */
+header::before {
+  content: "root@minesweeper:~$ SYSTEM INITIALIZED";
+  position: absolute;
+  top: 6px;
+  left: 20px;
+  font-size: 11px;
+  color: #006600;
+  font-family: "Share Tech Mono", "Courier New", monospace;
+  letter-spacing: 1px;
+  pointer-events: none;
+}
+
+/* Línea inferior del header */
+header::after {
+  content: "> READY FOR INPUT _";
+  position: absolute;
+  bottom: 6px;
+  left: 20px;
+  font-size: 11px;
+  color: #006600;
+  font-family: "Share Tech Mono", "Courier New", monospace;
+  letter-spacing: 1px;
+  pointer-events: none;
+  animation: blink 1.2s step-start infinite;
+}
+
+/* ── Botón menú hamburguesa ──────────────────────────────────── */
+.menu-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 18px;
+  cursor: pointer;
+  min-width: 110px;
+  transition: all 0.2s;
+  position: relative;
+  z-index: 101;
+  background: transparent;
+  border: 2px solid #00ff00;
+  box-shadow: 0 0 8px rgba(0, 255, 0, 0.2);
+}
+
+.menu-btn:hover {
+  background: rgba(0, 255, 0, 0.1);
+  box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+}
+
+.hamburger-icon {
+  width: 44px;
+  height: 34px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  padding: 5px 0;
+}
+
+.hamburger-line {
+  width: 100%;
+  height: 3px;
+  background: #00ff00;
+  box-shadow: 0 0 5px #00ff00;
+}
+
+.menu-text {
+  font-size: 11px;
+  font-weight: bold;
+  margin-top: 4px;
+  text-transform: uppercase;
+  color: #00ff00;
+  letter-spacing: 3px;
+  font-family: "Share Tech Mono", "Courier New", monospace;
+  text-shadow: 0 0 6px #00ff00;
+}
+
+/* ── Título central ─────────────────────────────────────────── */
+.title-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  position: relative;
+}
+
+/* Ocultar imagen */
+.title-section img {
+  display: none;
+}
+
+/* Subtítulo CRT debajo del h1 */
+.title-section::after {
+  content: var(--hck-text);
+  display: block;
+  color: #006600;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-align: center;
+  font-family: "Share Tech Mono", "Courier New", monospace;
+  margin-top: 2px;
+}
+
+h1 {
+  font-size: 42px;
+  font-weight: bold;
+  color: #00ff00;
+  letter-spacing: 8px;
+  font-family: "Share Tech Mono", "Courier New", monospace;
+  animation: glow 2s ease-in-out infinite;
+  text-align: center;
+}
+
+h1::before {
+  content: "█▓▒░ ";
+  font-size: 30px;
+  vertical-align: middle;
+}
+h1::after {
+  content: " ░▒▓█";
+  font-size: 30px;
+  vertical-align: middle;
+}
+
+/* ── Botones derecha del header ─────────────────────────────── */
+.header-right {
+  display: flex;
+  gap: 10px;
+  position: relative;
+  z-index: 101;
+}
+
+.header-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 14px;
+  cursor: pointer;
+  min-width: 90px;
+  transition: all 0.2s;
+  background: transparent;
+  border: 2px solid #00ff00;
+  color: #00ff00;
+  font-family: "Share Tech Mono", "Courier New", monospace;
+  box-shadow: 0 0 8px rgba(0, 255, 0, 0.2);
+}
+
+.header-btn:hover {
+  background: rgba(0, 255, 0, 0.1);
+  box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+}
+
+/* Ocultar imágenes, reemplazar con iconos ASCII */
+.header-btn img {
+  display: none;
+}
+
+.header-right > .header-btn:first-child::before {
+  content: "[LAN]";
+  font-size: 16px;
+  display: block;
+  text-align: center;
+  margin-bottom: 4px;
+  color: #00ff00;
+  text-shadow: 0 0 6px #00ff00;
+  font-family: "Share Tech Mono", "Courier New", monospace;
+  letter-spacing: 2px;
+}
+
+.dropdown-container .header-btn::before {
+  content: "[USR]";
+  font-size: 14px;
+  display: block;
+  text-align: center;
+  margin-bottom: 4px;
+  color: #00ff00;
+  text-shadow: 0 0 6px #00ff00;
+  font-family: "Share Tech Mono", "Courier New", monospace;
+  letter-spacing: 1px;
+}
+
+.btn-text {
+  font-size: 10px;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #00ff00;
+  letter-spacing: 2px;
+  font-family: "Share Tech Mono", "Courier New", monospace;
+  text-shadow: 0 0 4px #00ff00;
+}
+
+/* ============================================================
+   MAIN
+   ============================================================ */
+main {
+  background: #0a0a0a;
+  border: 3px solid #00ff00;
+  height: 83vh;
+  display: flex;
+  padding: 15px;
+  padding-bottom: 0px;
+  gap: 15px;
+  justify-content: space-between;
+  align-items: normal;
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+  box-shadow:
+    0 0 20px rgba(0, 255, 0, 0.15),
+    inset 0 0 30px rgba(0, 255, 0, 0.03);
+}
+
+/* ============================================================
+   SIDEBAR — MISSION SELECT
+   ============================================================ */
+.sidebar {
+  width: 240px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  height: fit-content;
+  background: #0d0d0d;
+  border: 3px solid #00ff00;
+  padding: 0;
+  box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Título "MISSION SELECT" via ::before */
+.sidebar::before {
+  content: var(--hck-difficulty);
+  display: block;
+  background: #00ff00;
+  color: #000;
+  padding: 10px;
+  font-weight: bold;
+  text-align: center;
+  font-size: 13px;
+  letter-spacing: 3px;
+  font-family: "Share Tech Mono", "Courier New", monospace;
+  text-transform: uppercase;
+}
+
+/* No queremos el ::before del borde rasgado pirata */
+.sidebar::after {
+  display: none;
+}
+
+.sidebar > .custom-select,
+.sidebar > .retro-bevel-inset {
+  margin: 12px;
+  width: calc(100% - 24px);
+}
+
+.sidebar .custom-select {
+  margin: 12px !important;
+  width: calc(100% - 24px) !important;
+}
+
+.difficulty-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 12px;
+}
+
+/* Quitar el ::before del tema pirata */
+.difficulty-grid::before {
+  display: none !important;
+  content: none !important;
+}
+
+.difficulty-btn {
+  background: transparent;
+  color: #00ff00;
+  border: 2px solid #00ff00 !important;
+  padding: 13px 13px 13px 30px;
+  cursor: pointer;
+  font-family: "Share Tech Mono", "Courier New", monospace;
+  font-size: 13px;
+  font-weight: bold;
+  transition: all 0.2s;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  position: relative;
+  text-align: left;
+  margin-bottom: 8px;
+  box-shadow: 0 0 6px rgba(0, 255, 0, 0.15);
+  text-shadow: 0 0 5px #00ff00;
+}
+
+.difficulty-btn::before {
+  content: ">";
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+  opacity: 0.5;
+  transition: all 0.2s;
+}
+
+.difficulty-btn:hover {
+  background: rgba(0, 255, 0, 0.1);
+  padding-left: 38px;
+  border-color: #00ff00 !important;
+  box-shadow: 0 0 15px rgba(0, 255, 0, 0.4);
+}
+
+.difficulty-btn:hover::before {
+  opacity: 1;
+  left: 14px;
+}
+
+.difficulty-btn:active {
+  background: rgba(0, 255, 0, 0.2);
+}
+
+/* ============================================================
+   GAME SECTION
+   ============================================================ */
+.game-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  height: 100%;
+  overflow: hidden;
+}
+
+.game-panel {
+  background: #0a0a0a;
+  border: 3px solid #00ff00 !important;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow:
+    0 0 30px rgba(0, 255, 0, 0.4),
+    inset 0 0 20px rgba(0, 255, 0, 0.05);
+  width: fit-content;
+  height: fit-content;
+}
+
+.game-header {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 15px 25px;
+  background: #000;
+  border: 2px solid #00ff00 !important;
+  gap: 20px;
+  box-shadow: inset 0 0 20px rgba(0, 255, 0, 0.1);
+}
+
+/* Contadores — display digital */
+.counter {
+  background: #000;
+  color: #00ff00;
+  font-weight: bold;
+  padding: 12px 24px;
+  font-family: "Share Tech Mono", "Courier New", monospace;
+  border: 3px solid #00ff00 !important;
+  letter-spacing: 5px;
+  font-size: 36px;
+  text-shadow:
+    0 0 10px #00ff00,
+    0 0 20px #00ff00;
+  box-shadow:
+    0 0 20px rgba(0, 255, 0, 0.4),
+    inset 0 0 10px rgba(0, 255, 0, 0.2);
+  min-width: 130px;
+  text-align: center;
+}
+
+/* Reset btn — reset circular CRT */
+.reset-btn {
+  width: 68px;
+  height: 68px;
+  background: #000;
+  border: 3px solid #00ff00 !important;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.4s;
+  box-shadow:
+    0 0 15px rgba(0, 255, 0, 0.3),
+    inset 0 0 10px rgba(0, 255, 0, 0.1);
+  position: relative;
+  flex-shrink: 0;
+}
+
+.reset-btn img {
+  display: none;
+}
+
+.reset-btn::before {
+  display: none;
+}
+
+.reset-btn::after {
+  content: "⟲";
+  color: #00ff00;
+  font-size: 36px;
+  text-shadow: 0 0 10px #00ff00;
+  line-height: 1;
+}
+
+.reset-btn:hover {
+  background: rgba(0, 255, 0, 0.15);
+  box-shadow:
+    0 0 30px rgba(0, 255, 0, 0.6),
+    inset 0 0 20px rgba(0, 255, 0, 0.2);
+  transform: rotate(180deg);
+}
+
+/* ── Board ───────────────────────────────────────────────────── */
+.board-container {
+  background: #000;
+  padding: 10px;
+  border: 3px solid #00ff00 !important;
+  box-shadow:
+    0 0 20px rgba(0, 255, 0, 0.3),
+    inset 0 0 20px rgba(0, 255, 0, 0.07);
+  overflow: auto;
+  width: fit-content;
+  height: fit-content;
+  align-self: center;
+}
+
+.tablero {
+  display: grid;
+  grid-template-columns: repeat(30, 22px);
+  gap: 2px;
+  background: #000;
+  padding: 4px;
+  width: fit-content;
+  justify-content: center;
+}
+
+.cell,
+.casilla {
+  width: 22px;
+  height: 22px;
+  background: #0d0d0d;
+  border: 1px solid #004400;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 12px;
+  transition: all 0.15s;
+  box-shadow: 0 0 3px rgba(0, 255, 0, 0.15);
+  user-select: none;
+  font-family: "Share Tech Mono", "Courier New", monospace;
+}
+.casilla img {
+  object-fit: fill;
+  height: inherit;
+}
+.cell:hover,
+.casilla:hover {
+  background: rgba(0, 255, 0, 0.12);
+  border-color: #00ff00;
+  box-shadow: 0 0 8px rgba(0, 255, 0, 0.4);
+}
+
+.cell:active,
+.casilla:active {
+  background: rgba(0, 255, 0, 0.2);
+  transform: scale(0.92);
+}
+
+.cell.revealed,
+.casilla.revealed {
+  background: #000;
+  border-color: #003300;
+  box-shadow: inset 0 0 4px rgba(0, 255, 0, 0.1);
+}
+
+.cell.num-1,
+.casilla.num-1 {
+  color: #00ffff;
+  text-shadow: 0 0 5px #00ffff;
+}
+.cell.num-2,
+.casilla.num-2 {
+  color: #00ff00;
+  text-shadow: 0 0 5px #00ff00;
+}
+.cell.num-3,
+.casilla.num-3 {
+  color: #ffff00;
+  text-shadow: 0 0 5px #ffff00;
+}
+.cell.num-4,
+.casilla.num-4 {
+  color: #ff00ff;
+  text-shadow: 0 0 5px #ff00ff;
+}
+.cell.num-5,
+.casilla.num-5 {
+  color: #ff6600;
+  text-shadow: 0 0 5px #ff6600;
+}
+.cell.num-6,
+.casilla.num-6 {
+  color: #00ff88;
+  text-shadow: 0 0 5px #00ff88;
+}
+.cell.num-7,
+.casilla.num-7 {
+  color: #ff0000;
+  text-shadow: 0 0 5px #ff0000;
+}
+.cell.num-8,
+.casilla.num-8 {
+  color: #ffffff;
+  text-shadow: 0 0 5px #ffffff;
+}
+
+.casilla.mina {
+  background: #ff0000;
+  border-color: #ff0000;
+}
+/* .casilla.minaExplotada { background: #000; border-color: #ff0000; box-shadow: 0 0 10px #ff0000; } */
+.casilla.bandera {
+  background: rgba(255, 255, 0, 0.1) !important;
+  border-color: #ffff00 !important;
+}
+.casilla.duda {
+  background: rgba(255, 165, 0, 0.1) !important;
+  border-color: #ffa500 !important;
+}
+
+/* ============================================================
+   SCOREBOARD — terminal de datos
+   ============================================================ */
+.scoreboard {
+  width: 290px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.score-panel {
+  background: #0a0a0a;
+  border: 3px solid #00ff00 !important;
+  padding: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+}
+
+/* Borde interior decorativo */
+.score-panel::before {
+  display: none;
+}
+
+.score-panel::after {
+  display: none;
+}
+
+.score-header {
+  display: flex !important;
+  gap: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  border-bottom: 2px solid #00ff00 !important;
+  box-shadow: none !important;
+  margin-bottom: 0;
+}
+
+.score-filter-btn {
+  flex: 1;
+  padding: 11px 5px !important;
+  cursor: pointer;
+  font-family: "Share Tech Mono", "Courier New", monospace;
+  font-size: 11px !important;
+  font-weight: bold;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  background: transparent !important;
+  color: #006600 !important;
+  border: none !important;
+  border-right: 1px solid #003300 !important;
+  transition: all 0.2s;
+}
+
+.score-filter-btn:last-child {
+  border-right: none !important;
+}
+
+.score-filter-btn:hover {
+  background: rgba(0, 255, 0, 0.1) !important;
+  color: #00ff00 !important;
+}
+
+.score-filter-btn.active {
+  background: #00ff00 !important;
+  color: #000 !important;
+  box-shadow: none;
+}
+
+.score-list {
+  flex: 1;
+  overflow-y: auto;
+  background: #000;
+  padding: 0;
+  border: none;
+  position: relative;
+}
+
+/* Título del leaderboard */
+.score-list::before {
+  content: var(--hck-leaderboard);
+  display: block;
+  background: #00ff00;
+  color: #000;
+  padding: 10px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  font-family: "Share Tech Mono", "Courier New", monospace;
+  margin-bottom: 0;
+}
+
+.score-list::-webkit-scrollbar {
+  width: 8px;
+}
+.score-list::-webkit-scrollbar-track {
+  background: #0a0a0a;
+  border: 1px solid #003300;
+}
+.score-list::-webkit-scrollbar-thumb {
+  background: #00ff00;
+  box-shadow: 0 0 8px rgba(0, 255, 0, 0.5);
+}
+
+.score-item {
+  height: 9.35%;
+  display: flex;
+  justify-content: space-between;
+  color: #00ff00;
+  font-weight: bold;
+  padding: 10px 14px;
+  border-bottom: 1px solid #003300;
+  font-size: 12px;
+  transition: all 0.2s;
+  font-family: "Share Tech Mono", "Courier New", monospace;
+  letter-spacing: 1px;
+}
+
+.score-item:hover {
+  background: rgba(0, 255, 0, 0.1);
+  padding-left: 22px;
+}
+
+.score-item::before {
+  content: "▸";
+  margin-right: 8px;
+  opacity: 0;
+  transition: opacity 0.2s;
+  color: #00ff00;
+}
+
+.score-item:hover::before {
+  opacity: 1;
+}
+
+/* ============================================================
+   ACHIEVEMENTS — log de eventos
+   ============================================================ */
+.achi-section {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  height: 100%;
+}
+
+.achi-panel {
+  background: #0a0a0a;
+  border: 3px solid #00ff00 !important;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  box-shadow:
+    0 0 30px rgba(0, 255, 0, 0.35),
+    inset 0 0 20px rgba(0, 255, 0, 0.03);
+}
+
+.achi-header {
+  background: #00ff00;
+  color: #000;
+  padding: 13px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  border: none !important;
+  margin-bottom: 0;
+  box-shadow: none;
+  font-family: "Share Tech Mono", "Courier New", monospace;
+}
+
+/* Quitar los ::before/::after del tema pirata */
+.achi-header::before {
+  content: "[ ";
+  color: #000;
+}
+.achi-header::after {
+  content: " ]";
+  color: #000;
+}
+
+.achi-header h2 {
+  display: inline;
+  font-size: 16px;
+  color: #000;
+  font-family: "Share Tech Mono", "Courier New", monospace;
+  letter-spacing: 4px;
+  text-shadow: none;
+}
+
+.achi-container {
+  background: #000;
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border: none;
+}
+
+.achi-container::-webkit-scrollbar {
+  width: 8px;
+}
+.achi-container::-webkit-scrollbar-track {
+  background: #0a0a0a;
+  border: 1px solid #003300;
+}
+.achi-container::-webkit-scrollbar-thumb {
+  background: #00ff00;
+}
+
+.achievement-item {
+  background: #0d0d0d;
+  border: 2px solid #003300 !important;
+  padding: 13px 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 72px;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.achievement-item::before {
+  content: "▸";
+  position: absolute;
+  left: -2px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #00ff00;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.achievement-item:hover {
+  background: rgba(0, 255, 0, 0.07);
+  border-color: #00ff00 !important;
+  box-shadow: 0 0 10px rgba(0, 255, 0, 0.2);
+}
+
+.achievement-item:hover::before {
+  opacity: 1;
+}
+
+.achievement-item.unlocked {
+  border-color: #00ff00 !important;
+  box-shadow: 0 0 8px rgba(0, 255, 0, 0.2);
+}
+
+.achi-icon {
+  width: 46px;
+  height: 46px;
+  background: #000;
+  border: 2px solid #003300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+  box-shadow: inset 0 0 6px rgba(0, 255, 0, 0.1);
+}
+
+.achievement-item.unlocked .achi-icon {
+  border: 2px solid #00ff00;
+  box-shadow:
+    0 0 10px rgba(0, 255, 0, 0.4),
+    inset 0 0 8px rgba(0, 255, 0, 0.1);
+}
+
+.achi-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.achi-title {
+  font-size: 13px;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #006600;
+  letter-spacing: 2px;
+  font-family: "Share Tech Mono", "Courier New", monospace;
+}
+
+.achievement-item.unlocked .achi-title {
+  color: #00ff00;
+  text-shadow: 0 0 6px rgba(0, 255, 0, 0.5);
+}
+
+.achi-description {
+  font-size: 10px;
+  color: #005500;
+  line-height: 1.4;
+  font-family: "Share Tech Mono", "Courier New", monospace;
+  letter-spacing: 0.5px;
+}
+
+.achievement-item.unlocked .achi-description {
+  color: #009900;
+}
+
+.achi-points {
+  font-size: 18px;
+  font-weight: bold;
+  color: #009900;
+  font-family: "Share Tech Mono", "Courier New", monospace;
+  min-width: 40px;
+  text-align: center;
+  letter-spacing: 1px;
+}
+
+.achievement-item.unlocked .achi-points {
+  color: #00ff00;
+  text-shadow: 0 0 8px rgba(0, 255, 0, 0.5);
+}
+
+.achi-status {
+  padding: 5px 12px;
+  font-size: 9px;
+  font-weight: bold;
+  text-transform: uppercase;
+  background: #000;
+  color: #004400;
+  border: 1px solid #003300 !important;
+  flex-shrink: 0;
+  letter-spacing: 2px;
+  font-family: "Share Tech Mono", "Courier New", monospace;
+}
+
+.achievement-item.unlocked .achi-status {
+  background: #00ff00;
+  color: #000;
+  border: 1px solid #00ff00 !important;
+  box-shadow: 0 0 8px rgba(0, 255, 0, 0.4);
+}
+
+/* ============================================================
+   SHOP — tienda de datos
+   ============================================================ */
+.shop-section {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  height: 100%;
+}
+
+.shop-panel {
+  background: #0a0a0a;
+  border: 3px solid #00ff00 !important;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  box-shadow: 0 0 30px rgba(0, 255, 0, 0.35);
+}
+
+.shop-header {
+  background: #00ff00;
+  color: #000;
+  padding: 13px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: bold;
+  letter-spacing: 3px;
+  margin-bottom: 0;
+  text-transform: uppercase;
+  border: none !important;
+  font-family: "Share Tech Mono", "Courier New", monospace;
+}
+
+.shop-header h2 {
+  font-size: 15px;
+  color: #000;
+  letter-spacing: 4px;
+  font-family: "Share Tech Mono", "Courier New", monospace;
+  text-shadow: none;
+}
+
+.shop-currency {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #000;
+  padding: 6px 14px;
+  border: 2px solid #00ff00;
+  box-shadow: 0 0 8px rgba(0, 255, 0, 0.3);
+}
+
+.currency-icon {
+  font-size: 16px;
+}
+
+.currency-amount {
+  font-size: 16px;
+  font-weight: bold;
+  color: #00ff00;
+  min-width: 55px;
+  text-align: center;
+  text-shadow: 0 0 8px #00ff00;
+  font-family: "Share Tech Mono", "Courier New", monospace;
+  letter-spacing: 2px;
+}
+
+.currency-label {
+  font-size: 10px;
+  color: #009900;
+  font-weight: bold;
+  letter-spacing: 2px;
+  font-family: "Share Tech Mono", "Courier New", monospace;
+}
+
+.shop-container {
+  background: #000;
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 12px;
+  align-content: start;
+  border: none;
+}
+
+.shop-container::-webkit-scrollbar {
+  width: 8px;
+}
+.shop-container::-webkit-scrollbar-track {
+  background: #0a0a0a;
+  border: 1px solid #003300;
+}
+.shop-container::-webkit-scrollbar-thumb {
+  background: #00ff00;
+}
+
+.shop-item {
+  background: #0d0d0d;
+  border: 2px solid #003300 !important;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 210px;
+  transition: all 0.2s;
+}
+
+.shop-item:hover {
+  border-color: #00ff00 !important;
+  box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
+}
+
+.shop-preview {
+  width: 100%;
+  height: 110px;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 2px solid #003300 !important;
+  position: relative;
+  box-shadow: inset 0 0 12px rgba(0, 255, 0, 0.08);
+}
+
+.shop-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.shop-badge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  padding: 3px 8px;
+  font-size: 9px;
+  font-weight: bold;
+  text-transform: uppercase;
+  background: #00ff00;
+  color: #000;
+  border: none !important;
+  letter-spacing: 1px;
+  font-family: "Share Tech Mono", "Courier New", monospace;
+}
+
+.shop-badge.equipped {
+  background: #00ffff;
+  color: #000;
+}
+
+.shop-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.shop-title {
+  font-size: 13px;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #00ff00;
+  text-align: center;
+  letter-spacing: 3px;
+  text-shadow: 0 0 6px rgba(0, 255, 0, 0.5);
+  font-family: "Share Tech Mono", "Courier New", monospace;
+}
+
+.shop-description {
+  font-size: 10px;
+  color: #009900;
+  line-height: 1.5;
+  text-align: center;
+  font-family: "Share Tech Mono", "Courier New", monospace;
+  letter-spacing: 0.5px;
+}
+
+.shop-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #003300;
+}
+
+.shop-price {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 14px;
+  font-weight: bold;
+  color: #00ff00;
+  font-family: "Share Tech Mono", "Courier New", monospace;
+  text-shadow: 0 0 6px rgba(0, 255, 0, 0.4);
+  letter-spacing: 1px;
+}
+
+.shop-price .currency-icon {
+  font-size: 16px;
+}
+
+.shop-price.free {
+  color: #00ffff;
+  text-shadow: 0 0 6px rgba(0, 255, 255, 0.4);
+}
+
+.shop-btn {
+  padding: 8px 14px;
+  font-size: 11px;
+  font-weight: bold;
+  text-transform: uppercase;
+  cursor: pointer;
+  font-family: "Share Tech Mono", "Courier New", monospace;
+  transition: all 0.2s;
+  white-space: nowrap;
+  letter-spacing: 1px;
+}
+
+.shop-btn:hover:not(:disabled) {
+  box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+}
+
+.shop-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.shop-btn.buy {
+  background: transparent;
+  color: #00ff00;
+  border: 2px solid #00ff00 !important;
+  box-shadow: 0 0 6px rgba(0, 255, 0, 0.2);
+}
+
+.shop-btn.buy:hover:not(:disabled) {
+  background: #00ff00;
+  color: #000;
+}
+
+.shop-btn.equip {
+  background: transparent;
+  color: #00ffff;
+  border: 2px solid #00ffff !important;
+}
+
+.shop-btn.equip:hover:not(:disabled) {
+  background: #00ffff;
+  color: #000;
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
+}
+
+.shop-btn.equipped {
+  background: transparent;
+  border: 2px solid #003300 !important;
+  cursor: default;
+}
+
+/* ============================================================
+   HISTORY — log de misiones
+   ============================================================ */
+.hist-section {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  height: 100%;
+}
+
+.hist-panel {
+  background: #0a0a0a;
+  border: 3px solid #00ff00 !important;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  box-shadow:
+    0 0 30px rgba(0, 255, 0, 0.35),
+    inset 0 0 20px rgba(0, 255, 0, 0.03);
+}
+
+.hist-header {
+  background: #111;
+  border: none !important;
+  border-bottom: 2px solid #00ff00 !important;
+  padding: 12px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+  box-shadow: none;
+}
+
+.hist-header h2 {
+  font-size: 14px;
+  font-family: "Share Tech Mono", "Courier New", monospace;
+  color: #00ff00;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  text-shadow: 0 0 10px #00ff00;
+  white-space: nowrap;
+}
+
+.hist-header h2::before {
+  content: "[ ";
+}
+.hist-header h2::after {
+  content: " ]";
+}
+
+.hist-controls {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.hist-filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.hist-filter-label {
+  font-size: 9px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #006600;
+  font-family: "Share Tech Mono", "Courier New", monospace;
+}
+
+.hist-filter-btns {
+  display: flex;
+  gap: 3px;
+}
+
+.hist-filter-btn,
+.hist-result-btn {
+  padding: 6px 12px;
+  font-size: 10px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  font-family: "Share Tech Mono", "Courier New", monospace;
+  background: transparent;
+  color: #006600;
+  border: 1px solid #003300 !important;
+  transition: all 0.2s;
+  box-shadow: none;
+}
+
+.hist-filter-btn:hover,
+.hist-result-btn:hover {
+  color: #00ff00;
+  border-color: #00ff00 !important;
+  background: rgba(0, 255, 0, 0.08);
+  box-shadow: none;
+}
+
+.hist-filter-btn.active,
+.hist-result-btn.active {
+  background: #00ff00;
+  color: #000;
+  border-color: #00ff00 !important;
+  box-shadow: 0 0 8px rgba(0, 255, 0, 0.4);
+}
+
+.hist-clear-btn {
+  padding: 8px 14px;
+  font-size: 10px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  font-family: "Share Tech Mono", "Courier New", monospace;
+  background: transparent;
+  color: #ff3333;
+  border: 1px solid #660000 !important;
+  transition: all 0.2s;
+  align-self: flex-end;
+  box-shadow: none;
+}
+
+.hist-clear-btn:hover {
+  background: rgba(255, 0, 0, 0.1);
+  color: #ff6666;
+  border-color: #ff3333 !important;
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
+}
+
+.hist-col-header {
+  display: grid;
+  grid-template-columns: 130px 100px 110px 110px 1fr;
+  align-items: center;
+  padding: 8px 14px;
+  background: #0d0d0d;
+  border: none !important;
+  border-bottom: 1px solid #003300 !important;
+  gap: 8px;
+}
+
+.hist-col-header span {
+  font-size: 9px;
+  font-weight: bold;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #006600;
+  font-family: "Share Tech Mono", "Courier New", monospace;
+  text-align: center;
+}
+
+.hist-col-header span:first-child {
+  text-align: left;
+}
+
+.hist-list {
+  flex: 1;
+  overflow-y: auto;
+  background: #000;
+  border: none !important;
+  display: flex;
+  flex-direction: column;
+}
+
+.hist-list::-webkit-scrollbar {
+  width: 8px;
+}
+.hist-list::-webkit-scrollbar-track {
+  background: #0a0a0a;
+  border: 1px solid #003300;
+}
+.hist-list::-webkit-scrollbar-thumb {
+  background: #00ff00;
+}
+
+.hist-row {
+  display: grid;
+  grid-template-columns: 130px 100px 110px 110px 1fr;
+  align-items: center;
+  padding: 10px 14px;
+  border-bottom: 1px solid #001a00;
+  gap: 8px;
+  transition: all 0.15s;
+  font-family: "Share Tech Mono", "Courier New", monospace;
+}
+
+.hist-row:last-child {
+  border-bottom: none;
+}
+
+.hist-row:hover {
+  background: rgba(0, 255, 0, 0.07);
+  padding-left: 20px;
+  border-left: 2px solid #00ff00;
+}
+
+.hist-row--win {
+  border-left: 2px solid transparent;
+}
+.hist-row--loss {
+  border-left: 2px solid transparent;
+}
+.hist-row--win:hover {
+  border-left-color: #00ff00;
+}
+.hist-row--loss:hover {
+  border-left-color: #ff3333;
+}
+
+.col-diff,
+.col-result,
+.col-duration,
+.col-mines,
+.col-date {
+  font-size: 11px;
+  color: #009900;
+  text-align: center;
+  font-family: "Share Tech Mono", "Courier New", monospace;
+}
+
+.col-diff {
+  text-align: left;
+}
+.col-date {
+  color: #006600;
+  font-size: 10px;
+}
+.col-duration {
+  color: #00ff00;
+  letter-spacing: 1px;
+}
+
+.diff-badge {
+  display: inline-block;
+  padding: 3px 8px;
+  font-size: 9px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-family: "Share Tech Mono", "Courier New", monospace;
+  border: 1px solid;
+}
+
+.diff-badge--easy {
+  background: transparent;
+  color: #00ff00;
+  border-color: #006600;
+}
+.diff-badge--normal {
+  background: transparent;
+  color: #ffff00;
+  border-color: #888800;
+}
+.diff-badge--hard {
+  background: transparent;
+  color: #ff3333;
+  border-color: #660000;
+}
+
+.result-badge {
+  display: inline-block;
+  padding: 3px 8px;
+  font-size: 9px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-family: "Share Tech Mono", "Courier New", monospace;
+  border: 1px solid;
+}
+
+.result-badge--win {
+  background: #00ff00;
+  color: #000;
+  border-color: #00ff00;
+}
+.result-badge--loss {
+  background: transparent;
+  color: #ff3333;
+  border-color: #660000;
+}
+
+.mines-counter {
+  display: inline-block;
+  background: #000 !important;
+  color: #00ff00;
+  font-family: "Share Tech Mono", "Courier New", monospace;
+  font-size: 13px;
+  font-weight: bold;
+  letter-spacing: 3px;
+  padding: 3px 8px;
+  border: 1px solid #006600 !important;
+  text-shadow: 0 0 6px #00ff00;
+  box-shadow: inset 0 0 6px rgba(0, 255, 0, 0.1);
+}
+
+.hist-empty {
+  padding: 40px;
+  text-align: center;
+  color: #004400;
+  font-size: 14px;
+  font-family: "Share Tech Mono", "Courier New", monospace;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+
+.hist-empty::before {
+  content: "> ";
+  color: #006600;
+}
+.hist-empty::after {
+  content: " _";
+  animation: blink 1s step-start infinite;
+}
+
+.hist-stats {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 10px 16px;
+  background: #0d0d0d;
+  border: none !important;
+  border-top: 1px solid #003300 !important;
+  min-height: 46px;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.stat-label {
+  font-size: 8px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #006600;
+  font-family: "Share Tech Mono", "Courier New", monospace;
+}
+
+.stat-value {
+  font-size: 13px;
+  font-weight: bold;
+  color: #00ff00;
+  font-family: "Share Tech Mono", "Courier New", monospace;
+  letter-spacing: 1px;
+  text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
+}
+
+.stat-value--win {
+  color: #00ff00;
+  text-shadow: 0 0 6px rgba(0, 255, 0, 0.6);
+}
+.stat-value--loss {
+  color: #ff3333;
+  text-shadow: 0 0 6px rgba(255, 51, 51, 0.4);
+}
+
+.stat-sep {
+  color: #003300;
+  font-size: 16px;
+  line-height: 1;
+  user-select: none;
+}
+
+/* ============================================================
+   USER PROFILE — terminal de configuración
+   ============================================================ */
+.usr-section {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  height: 100%;
+}
+
+.usr-panel {
+  background: #0a0a0a;
+  border: 3px solid #00ff00 !important;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  box-shadow: 0 0 30px rgba(0, 255, 0, 0.35);
+}
+
+.usr-header {
+  background: #00ff00;
+  border: none !important;
+  padding: 13px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  box-shadow: none;
+}
+
+.usr-header h2 {
+  font-size: 14px;
+  font-family: "Share Tech Mono", "Courier New", monospace;
+  color: #000;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  text-shadow: none;
+}
+
+.usr-header h2::before {
+  content: "[ ";
+}
+.usr-header h2::after {
+  content: " ]";
+}
+
+.usr-header-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.usr-avatar {
+  font-size: 28px;
+  width: 48px;
+  height: 48px;
+  background: #000;
+  border: 2px solid #00ff00;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 0 10px rgba(0, 255, 0, 0.4);
+  filter: hue-rotate(90deg);
+}
+
+.usr-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.usr-name-display {
+  font-size: 14px;
+  font-weight: bold;
+  color: #000;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-family: "Share Tech Mono", "Courier New", monospace;
+}
+
+.usr-joined {
+  font-size: 9px;
+  color: #003300;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-family: "Share Tech Mono", "Courier New", monospace;
+}
+
+.usr-body {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  padding: 12px;
+  overflow: hidden;
+  background: #000;
+}
+
+.usr-card {
+  background: #0d0d0d;
+  border: 2px solid #003300 !important;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: none;
+}
+
+.usr-card--danger {
+  border-color: #660000 !important;
+  background: #0d0000;
+}
+
+.usr-card-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: #00ff00;
+  border: none;
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #000;
+  font-family: "Share Tech Mono", "Courier New", monospace;
+  box-shadow: none;
+}
+
+.usr-card-title--danger {
+  background: #ff3333;
+  color: #000;
+}
+
+.usr-card-icon {
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.usr-card-content {
+  flex: 1;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  overflow-y: auto;
+  background: #000;
+}
+
+.usr-card-content::-webkit-scrollbar {
+  width: 6px;
+}
+.usr-card-content::-webkit-scrollbar-track {
+  background: #0a0a0a;
+}
+.usr-card-content::-webkit-scrollbar-thumb {
+  background: #00ff00;
+}
+
+.usr-label {
+  font-size: 8px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #006600;
+  font-family: "Share Tech Mono", "Courier New", monospace;
+  margin-top: 3px;
+}
+
+.usr-field-readonly {
+  padding: 8px 10px;
+  background: #000 !important;
+  border: 1px solid #003300 !important;
+  color: #00ff00;
+  font-size: 12px;
+  font-family: "Share Tech Mono", "Courier New", monospace;
+  letter-spacing: 2px;
+  text-shadow: 0 0 5px rgba(0, 255, 0, 0.4);
+}
+
+.usr-input {
+  width: 100%;
+  padding: 8px 10px;
+  background: #000 !important;
+  color: #00ff00 !important;
+  border: 1px solid #006600 !important;
+  font-family: "Share Tech Mono", "Courier New", monospace;
+  font-size: 11px;
+  letter-spacing: 1px;
+  transition: border-color 0.2s;
+}
+
+.usr-input:focus {
+  outline: none;
+  border-color: #00ff00 !important;
+  box-shadow: 0 0 8px rgba(0, 255, 0, 0.3);
+}
+
+.usr-input::placeholder {
+  color: #004400;
+  font-style: normal;
+}
+
+.usr-hint {
+  font-size: 9px;
+  color: #005500;
+  font-family: "Share Tech Mono", "Courier New", monospace;
+  letter-spacing: 0.5px;
+}
+
+.usr-hint::before {
+  content: "// ";
+}
+
+.usr-btn {
+  padding: 9px 14px;
+  font-size: 11px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  font-family: "Share Tech Mono", "Courier New", monospace;
+  transition: all 0.2s;
+  margin-top: 5px;
+}
+
+.usr-btn--primary {
+  background: transparent;
+  color: #00ff00;
+  border: 2px solid #00ff00 !important;
+  box-shadow: 0 0 6px rgba(0, 255, 0, 0.2);
+}
+
+.usr-btn--primary:hover {
+  background: #00ff00;
+  color: #000;
+  box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+}
+
+.usr-btn--primary:active {
+  opacity: 0.8;
+}
+
+.usr-btn--danger {
+  background: transparent;
+  color: #ff3333;
+  border: 2px solid #660000 !important;
+}
+
+.usr-btn--danger:hover {
+  background: #ff3333;
+  color: #000;
+  border-color: #ff3333 !important;
+  box-shadow: 0 0 15px rgba(255, 0, 0, 0.4);
+}
+
+.usr-danger-warning {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px !important;
+  background: #110000 !important;
+  border: 1px solid #660000 !important;
+  margin-bottom: 3px;
+}
+
+.usr-warning-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.usr-warning-text {
+  font-size: 10px;
+  color: #ff6666;
+  line-height: 1.6;
+  font-family: "Share Tech Mono", "Courier New", monospace;
+}
+
+.usr-warning-text strong {
+  color: #ff3333;
+}
+
+.usr-toast {
+  display: none;
+  position: fixed;
+  bottom: 25px;
+  left: 50%;
+  transform: translateX(-50%) translateY(10px);
+  padding: 11px 24px;
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  font-family: "Share Tech Mono", "Courier New", monospace;
+  z-index: 99999;
+  opacity: 0;
+  transition:
+    opacity 0.2s,
+    transform 0.2s;
+  pointer-events: none;
+  background: #0d0d0d;
+  color: #00ff00;
+  border: 2px solid #00ff00 !important;
+  box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+}
+
+.usr-toast--visible {
+  display: block;
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.usr-toast--ok {
+  background: #001a00;
+  color: #00ff00;
+  border-color: #00ff00 !important;
+  box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+}
+
+.usr-toast--err {
+  background: #1a0000;
+  color: #ff3333;
+  border-color: #660000 !important;
+  box-shadow: 0 0 20px rgba(255, 0, 0, 0.4);
+}
+
+/* ============================================================
+   SCROLLBAR GLOBAL
+   ============================================================ */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0a0a0a;
+  border: 1px solid #003300;
+}
+::-webkit-scrollbar-thumb {
+  background: #00ff00;
+  box-shadow: 0 0 6px rgba(0, 255, 0, 0.4);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #00cc00;
+}

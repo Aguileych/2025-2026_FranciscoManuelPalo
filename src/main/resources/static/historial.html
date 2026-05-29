@@ -1,0 +1,422 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MINESWEEPER</title>
+    <link rel="icon" type="image/png" href="./img/mine.png"/>
+    <link
+      id="theme-stylesheet"
+      rel="stylesheet"
+      href="./css/theme-classic.css"
+    />
+  </head>
+  <body>
+    <header>
+      <div class="dropdown-container">
+        <div
+          class="menu-btn retro-bevel"
+          onclick="toggleDropdown('menuDropdown')"
+        >
+          <div class="hamburger-icon">
+            <div class="hamburger-line"></div>
+            <div class="hamburger-line"></div>
+            <div class="hamburger-line"></div>
+          </div>
+          <span class="menu-text">Menu</span>
+        </div>
+        <div id="menuDropdown" class="dropdown-content menu-dropdown">
+          <div class="menu-option retro-bevel">
+            <a href="minesweeper.html" data-i18n="menu.game">Game</a>
+          </div>
+          <div class="menu-option retro-bevel">
+            <a href="achievements.html" data-i18n="menu.achievements"
+              >Achievements</a
+            >
+          </div>
+          <div class="menu-option retro-bevel">
+            <a href="usuario.html" data-i18n="menu.user">User</a>
+          </div>
+          <div class="menu-option retro-bevel">
+            <a href="shop.html" data-i18n="menu.shop">Shop</a>
+          </div>
+          <div class="menu-option retro-bevel">
+            <a href="historial.html" data-i18n="menu.history">History</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="title-section">
+        <h1>MINESWEEPER</h1>
+        <img src="img/mine.png" alt="" />
+      </div>
+
+      <div class="header-right">
+        <div
+          class="header-btn retro-bevel"
+          onclick="
+            cambiarIdioma();
+            cargarHistorial();
+          "
+        >
+          <img src="img/unionjack.webp" alt="" id="langFlag" />
+          <span class="btn-text" id="langText" data-i18n="header.language"
+            >English</span
+          >
+        </div>
+
+        <div class="dropdown-container">
+          <div
+            class="header-btn retro-bevel"
+            onclick="toggleDropdown('loginDropdown')"
+          >
+            <img src="img/face.webp" alt="" />
+            <span id="loginBtnText" class="btn-text" data-i18n="header.login"
+              >Login</span
+            >
+          </div>
+          <div id="loginDropdown" class="dropdown-content login-dropdown">
+            <div class="login-form active" id="loginForm">
+              <h3
+                style="text-align: center; margin-bottom: 15px; font-size: 14px"
+                data-i18n="auth.loginTitle"
+              >
+                LOGIN
+              </h3>
+              <input
+                type="email"
+                id="loginEmail"
+                class="form-input retro-bevel-inset"
+                data-i18n-placeholder="auth.emailPlaceholder"
+                placeholder="Email"
+              />
+              <input
+                type="password"
+                id="loginPassword"
+                class="form-input retro-bevel-inset"
+                data-i18n-placeholder="auth.passwordPlaceholder"
+                placeholder="Password"
+              />
+              <p
+                id="loginError"
+                style="color: red; font-size: 12px; display: none"
+              ></p>
+              <button
+                class="form-button retro-bevel"
+                onclick="login()"
+                data-i18n="auth.loginBtn"
+              >
+                Log in
+              </button>
+              <button
+                class="switch-form-btn"
+                onclick="switchForm('register')"
+                data-i18n="auth.signupLink"
+              >
+                Sign up
+              </button>
+            </div>
+
+            <div class="register-form" id="registerForm">
+              <h3
+                style="text-align: center; margin-bottom: 15px; font-size: 14px"
+                data-i18n="auth.registerTitle"
+              >
+                Sign in
+              </h3>
+              <input
+                type="email"
+                id="regEmail"
+                class="form-input retro-bevel-inset"
+                data-i18n-placeholder="auth.emailRegPlaceholder"
+                placeholder="Correo"
+              />
+              <input
+                type="text"
+                id="regUsername"
+                class="form-input retro-bevel-inset"
+                data-i18n-placeholder="auth.usernamePlaceholder"
+                placeholder="Nombre"
+              />
+              <input
+                type="password"
+                id="regPassword"
+                class="form-input retro-bevel-inset"
+                data-i18n-placeholder="auth.passRegPlaceholder"
+                placeholder="Contraseña"
+              />
+              <p
+                id="regError"
+                style="color: red; font-size: 12px; display: none"
+              ></p>
+              <button
+                class="form-button retro-bevel"
+                onclick="registro()"
+                data-i18n="auth.registerBtn"
+              >
+                Sign in
+              </button>
+              <button
+                class="switch-form-btn"
+                onclick="switchForm('login')"
+                data-i18n="auth.loginLink"
+              >
+                Already have account?
+              </button>
+            </div>
+
+            <div
+              id="sessionPanel"
+              style="display: none; padding: 16px; text-align: center"
+            >
+              <p
+                id="sessionUsername"
+                style="font-weight: bold; margin-bottom: 12px"
+              ></p>
+              <button
+                class="form-button retro-bevel"
+                onclick="logout()"
+                data-i18n="auth.logout"
+              >
+                Log out
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="hist-section">
+        <div class="hist-panel retro-bevel-static">
+          <div class="hist-header retro-bevel-inset">
+            <h2 data-i18n="history.title">GAME HISTORY</h2>
+            <div class="hist-controls">
+              <div class="hist-filter-group">
+                <span class="hist-filter-label" data-i18n="history.difficulty"
+                  >DIFFICULTY</span
+                >
+                <div class="hist-filter-btns">
+                  <button
+                    class="hist-filter-btn active retro-bevel"
+                    data-filter="all"
+                    data-i18n="history.all"
+                  >
+                    ALL
+                  </button>
+                  <button
+                    class="hist-filter-btn retro-bevel"
+                    data-filter="easy"
+                    data-i18n="history.easy"
+                  >
+                    EASY
+                  </button>
+                  <button
+                    class="hist-filter-btn retro-bevel"
+                    data-filter="normal"
+                    data-i18n="history.normal"
+                  >
+                    NORMAL
+                  </button>
+                  <button
+                    class="hist-filter-btn retro-bevel"
+                    data-filter="hard"
+                    data-i18n="history.hard"
+                  >
+                    HARD
+                  </button>
+                </div>
+              </div>
+              <div class="hist-filter-group">
+                <span class="hist-filter-label" data-i18n="history.result"
+                  >RESULT</span
+                >
+                <div class="hist-filter-btns">
+                  <button
+                    class="hist-result-btn active retro-bevel"
+                    data-result="all"
+                    data-i18n="history.all"
+                  >
+                    ALL
+                  </button>
+                  <button
+                    class="hist-result-btn retro-bevel"
+                    data-result="win"
+                    data-i18n="history.win"
+                  >
+                    WIN
+                  </button>
+                  <button
+                    class="hist-result-btn retro-bevel"
+                    data-result="loss"
+                    data-i18n="history.loss"
+                  >
+                    LOSS
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="hist-col-header retro-bevel-inset">
+            <span class="col-diff" data-i18n="history.difficulty"
+              >DIFFICULTY</span
+            >
+            <span class="col-result" data-i18n="history.result">RESULT</span>
+            <span class="col-duration" data-i18n="history.duration"
+              >DURATION</span
+            >
+            <span class="col-mines" data-i18n="history.minesLeft"
+              >MINES LEFT</span
+            >
+            <span class="col-date" data-i18n="history.date">DATE</span>
+          </div>
+
+          <div class="hist-list retro-bevel-inset" id="histList"></div>
+          <div class="hist-stats retro-bevel-inset" id="histStats"></div>
+        </div>
+      </section>
+    </main>
+
+    <script src="./js/navegacion.js"></script>
+    <script src="./js/login.js"></script>
+    <script src="./js/i18n.js"></script>
+    <script>
+      requiereLogin();
+
+      const usuarioInicial = getUsuario();
+      if (usuarioInicial?.temaEquipado) {
+        document.getElementById("theme-stylesheet").href =
+          `./css/${usuarioInicial.temaEquipado}`;
+      }
+
+      let todasLasPartidas = [];
+      let activeFilter = "all";
+      let activeResult = "all";
+
+      function formatFecha(fecha) {
+        if (!fecha) return "—";
+        return new Date(fecha).toLocaleString("es-ES", {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+      }
+
+      async function cargarHistorial() {
+        const usuario = getUsuario();
+        const list = document.getElementById("histList");
+        list.innerHTML = `<div class="hist-empty">${t("history.loading")}</div>`;
+
+        const res = await fetch(
+          `/api/partidas/jugador/${usuario.id}/historial`,
+        );
+        todasLasPartidas = await res.json();
+
+        renderHistory();
+      }
+
+      function renderHistory() {
+        const list = document.getElementById("histList");
+        list.innerHTML = "";
+
+        const filtered = todasLasPartidas.filter(
+          (p) =>
+            (activeFilter === "all" ||
+              p.dificultad.toLowerCase() === activeFilter) &&
+            (activeResult === "all" || p.resultado === activeResult),
+        );
+
+        if (filtered.length === 0) {
+          list.innerHTML = `<div class="hist-empty">${t("history.noGames")}</div>`;
+          renderStats([]);
+          return;
+        }
+
+        filtered.forEach((partida) => {
+          const row = document.createElement("div");
+          row.className = `hist-row retro-bevel-static ${partida.resultado === "win" ? "hist-row--win" : "hist-row--loss"}`;
+          row.innerHTML = `
+            <span class="col-diff">
+              <span class="diff-badge diff-badge--${partida.dificultad.toLowerCase()}">${t("history." + partida.dificultad)}</span>
+            </span>
+            <span class="col-result">
+              <span class="result-badge result-badge--${partida.resultado}">${t("history." + partida.resultado)}</span>
+            </span>
+            <span class="col-duration">${partida.tiempo}</span>
+            <span class="col-mines">
+              <span class="mines-counter retro-bevel-inset">${String(partida.minasRestantes).padStart(3, "0")}</span>
+            </span>
+            <span class="col-date">${formatFecha(partida.fechaPartida)}</span>
+          `;
+          list.appendChild(row);
+        });
+
+        renderStats(filtered);
+      }
+
+      function renderStats(partidas) {
+        const el = document.getElementById("histStats");
+        if (partidas.length === 0) {
+          el.innerHTML = `<span class="stat-item">${t("history.noData")}</span>`;
+          return;
+        }
+
+        const wins = partidas.filter((p) => p.resultado === "win").length;
+        const losses = partidas.length - wins;
+        const winRate = Math.round((wins / partidas.length) * 100);
+        const avgTime = Math.round(
+          partidas.reduce((a, p) => a + p.tiempo, 0) / partidas.length,
+        );
+        const tiemposVictorias = partidas
+          .filter((p) => p.resultado === "win")
+          .map((p) => p.tiempo);
+        const bestTime =
+          tiemposVictorias.length > 0 ? Math.min(...tiemposVictorias) : null;
+
+        el.innerHTML = `
+          <span class="stat-item"><span class="stat-label">${t("history.games")}</span><span class="stat-value">${partidas.length}</span></span>
+          <span class="stat-sep">|</span>
+          <span class="stat-item"><span class="stat-label">${t("history.wins")}</span><span class="stat-value stat-value--win">${wins}</span></span>
+          <span class="stat-sep">|</span>
+          <span class="stat-item"><span class="stat-label">${t("history.losses")}</span><span class="stat-value stat-value--loss">${losses}</span></span>
+          <span class="stat-sep">|</span>
+          <span class="stat-item"><span class="stat-label">${t("history.winRate")}</span><span class="stat-value">${winRate}%</span></span>
+          <span class="stat-sep">|</span>
+          <span class="stat-item"><span class="stat-label">${t("history.avgTime")}</span><span class="stat-value">${avgTime}</span></span>
+          <span class="stat-sep">|</span>
+          <span class="stat-item"><span class="stat-label">${t("history.bestTime")}</span><span class="stat-value stat-value--win">${bestTime !== null ? bestTime : "N/A"}</span></span>
+        `;
+      }
+
+      document.querySelectorAll(".hist-filter-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          document
+            .querySelectorAll(".hist-filter-btn")
+            .forEach((b) => b.classList.remove("active"));
+          btn.classList.add("active");
+          activeFilter = btn.dataset.filter;
+          renderHistory();
+        });
+      });
+
+      document.querySelectorAll(".hist-result-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          document
+            .querySelectorAll(".hist-result-btn")
+            .forEach((b) => b.classList.remove("active"));
+          btn.classList.add("active");
+          activeResult = btn.dataset.result;
+          renderHistory();
+        });
+      });
+
+      window.addEventListener("DOMContentLoaded", async () => {
+        await esperarTraducciones();
+        cargarHistorial();
+      });
+    </script>
+  </body>
+</html>

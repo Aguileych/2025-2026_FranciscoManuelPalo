@@ -1,0 +1,156 @@
+{
+  "menu": {
+    "game": "Game",
+    "achievements": "Achievements",
+    "user": "User",
+    "shop": "Shop",
+    "history": "History",
+    "versus": "Versus"
+  },
+  "header": {
+    "language": "English",
+    "login": "Login"
+  },
+  "auth": {
+    "loginTitle": "LOGIN",
+    "emailPlaceholder": "Email",
+    "passwordPlaceholder": "Password",
+    "loginBtn": "Log in",
+    "signupLink": "Sign up",
+    "registerTitle": "Sign in",
+    "usernamePlaceholder": "Username",
+    "emailRegPlaceholder": "Email",
+    "passRegPlaceholder": "Password",
+    "registerBtn": "Register",
+    "loginLink": "Already have an account? Log in",
+    "logout": "Log out"
+  },
+  "game": {
+    "easy": "EASY",
+    "normal": "NORMAL",
+    "hard": "HARD",
+    "classic": "CLASSIC"
+  },
+  "scoreboard": {
+    "easy": "EASY",
+    "normal": "NORMAL",
+    "hard": "HARD"
+  },
+  "shop": {
+    "title": "COSMETIC SHOP",
+    "coins": "COINS",
+    "equipped": "EQUIPPED",
+    "owned": "OWNED",
+    "buy": "BUY",
+    "equip": "EQUIP",
+    "free": "FREE"
+  },
+  "achievements": {
+    "title": "ACHIEVEMENTS",
+    "unlocked": "Unlocked",
+    "locked": "Locked",
+    "loading": "Loading..."
+  },
+  "history": {
+    "title": "GAME HISTORY",
+    "difficulty": "DIFFICULTY",
+    "result": "RESULT",
+    "duration": "DURATION",
+    "minesLeft": "MINES LEFT",
+    "date": "DATE",
+    "all": "ALL",
+    "easy": "EASY",
+    "normal": "NORMAL",
+    "hard": "HARD",
+    "win": "WIN",
+    "loss": "LOSS",
+    "clearAll": "CLEAR ALL",
+    "noGames": "NO GAMES FOUND",
+    "games": "GAMES",
+    "wins": "WINS",
+    "losses": "LOSSES",
+    "winRate": "WIN RATE",
+    "avgTime": "AVG TIME",
+    "bestTime": "BEST TIME",
+    "noData": "NO DATA",
+    "loading": "Loading..."
+  },
+  "user": {
+    "title": "USER PROFILE",
+    "joined": "JOINED",
+    "changeUsername": "CHANGE USERNAME",
+    "currentUsername": "CURRENT USERNAME",
+    "newUsernamePlaceholder": "Enter new username",
+    "newUsername": "NEW USERNAME",
+    "saveUsername": "SAVE USERNAME",
+    "changePassword": "CHANGE PASSWORD",
+    "currentPassword": "CURRENT PASSWORD",
+    "currentPassPlaceholder": "Current password",
+    "newPassword": "NEW PASSWORD",
+    "newPassPlaceholder": "New password",
+    "confirmPassword": "CONFIRM NEW PASSWORD",
+    "confirmPassPlaceholder": "Repeat new password",
+    "savePassword": "SAVE PASSWORD",
+    "deleteAccount": "DELETE ACCOUNT",
+    "deleteWarning": "This action is permanent and cannot be undone. All your data, scores and achievements will be lost forever.",
+    "confirmYourPass": "CONFIRM YOUR PASSWORD",
+    "confirmPassPlaceholder2": "Enter password to confirm",
+    "typeDelete": "TYPE \"DELETE\" TO CONFIRM",
+    "typeDeletePlaceholder": "Type DELETE",
+    "deleteBtn": "DELETE ACCOUNT",
+    "usernameUpdated": "USERNAME UPDATED SUCCESSFULLY",
+    "passwordUpdated": "PASSWORD UPDATED SUCCESSFULLY",
+    "accountDeleted": "ACCOUNT DELETED. GOODBYE."
+  },
+  "errors": {
+    "invalidUsername": "Invalid username format",
+    "emailTaken": "Email already registered",
+    "wrongPassword": "Incorrect password",
+    "passwordShort": "Password must be at least 8 characters",
+    "userNotFound": "User not found",
+    "insufficientPoints": "Insufficient points",
+    "alreadyOwned": "You already own this cosmetic",
+    "cosmeticNotFound": "Cosmetic not found",
+    "classicNotBuyable": "Classic theme cannot be purchased",
+    "fillAllFields": "Please fill in all fields",
+    "passwordsNoMatch": "Passwords do not match",
+    "enterCurrentPass": "Enter current password",
+    "enterPassword": "Enter your password",
+    "typeDeleteConfirm": "Type DELETE to confirm"
+  },
+  "css": {
+    "--pirate-text": "\"~ Arrr! Beware of Hidden Mines in These Cursed Waters ~\"",
+    "--difficulty": "\"⚔ Quest Difficulty ⚔\"",
+    "--cap-leaderboard": "\"⚔ Captain's Leaderboard ⚔\"",
+    "--hck-difficulty": "\"MISSION SELECT\"",
+    "--hck-leaderboard": "\"LEADERBOARD DATA\"",
+    "--hck-text": "\"[ MATRIX PROTOCOL: ACTIVE ]\""
+  },
+  "ok": {
+    "cosmeticBought": "Cosmetic purchased",
+    "cosmeticEquipped": "Cosmetic equipped",
+    "passwordUpdated": "Password updated",
+    "accountDeleted": "Account deleted",
+    "achievementUnlocked": "Achievement unlocked"
+  },
+  "logros": {
+    "incauto": { "nombre": "Reckless", "desc": "Explode for the first time" },
+    "principiante": { "nombre": "Beginner", "desc": "Complete an easy game" },
+    "normalidad": { "nombre": "Normality", "desc": "Complete a normal game" },
+    "experto": { "nombre": "Expert", "desc": "Complete a hard game" },
+    "velocista": {
+      "nombre": "Speedster",
+      "desc": "Complete a game in under 30s"
+    },
+    "temerario": {
+      "nombre": "Daredevil",
+      "desc": "Complete a game without flagging"
+    }
+  },
+  "registro": {
+    "faltaCampos": "Fill in all fields",
+    "incorrecto": "Email or password incorrect",
+    "registrado": "Email is already registered",
+    "creada": "Account created, log in"
+  }
+}

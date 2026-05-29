@@ -1,0 +1,165 @@
+{
+  "menu": {
+    "game": "Juego",
+    "achievements": "Logros",
+    "user": "Usuario",
+    "shop": "Tienda",
+    "history": "Historial",
+    "versus": "Versus"
+  },
+  "header": {
+    "language": "Espanol",
+    "login": "Entrar"
+  },
+  "auth": {
+    "loginTitle": "INICIAR SESION",
+    "emailPlaceholder": "Correo",
+    "passwordPlaceholder": "Contrasena",
+    "loginBtn": "Entrar",
+    "signupLink": "Registrarse",
+    "registerTitle": "REGISTRO",
+    "usernamePlaceholder": "Nombre",
+    "emailRegPlaceholder": "Correo",
+    "passRegPlaceholder": "Contrasena",
+    "registerBtn": "Registrarse",
+    "loginLink": "¿Ya tienes cuenta? Inicia sesion",
+    "logout": "Cerrar sesion"
+  },
+  "game": {
+    "easy": "FACIL",
+    "normal": "NORMAL",
+    "hard": "DIFICIL",
+    "classic": "CLASICO"
+  },
+  "scoreboard": {
+    "easy": "FACIL",
+    "normal": "NORMAL",
+    "hard": "DIFICIL"
+  },
+  "shop": {
+    "title": "TIENDA DE COSMETICOS",
+    "coins": "MONEDAS",
+    "equipped": "EQUIPADO",
+    "owned": "OBTENIDO",
+    "buy": "COMPRAR",
+    "equip": "EQUIPAR",
+    "free": "GRATIS"
+  },
+  "achievements": {
+    "title": "LOGROS",
+    "unlocked": "Desbloqueado",
+    "locked": "Bloqueado",
+    "loading": "Cargando..."
+  },
+  "history": {
+    "title": "HISTORIAL DE PARTIDAS",
+    "difficulty": "DIFICULTAD",
+    "result": "RESULTADO",
+    "duration": "DURACION",
+    "minesLeft": "MINAS RESTANTES",
+    "date": "FECHA",
+    "all": "TODOS",
+    "easy": "FACIL",
+    "normal": "NORMAL",
+    "hard": "DIFICIL",
+    "win": "VICTORIA",
+    "loss": "DERROTA",
+    "clearAll": "LIMPIAR TODO",
+    "noGames": "NO SE ENCONTRARON PARTIDAS",
+    "games": "PARTIDAS",
+    "wins": "VICTORIAS",
+    "losses": "DERROTAS",
+    "winRate": "% VICTORIAS",
+    "avgTime": "TIEMPO MEDIO",
+    "bestTime": "MEJOR TIEMPO",
+    "noData": "SIN DATOS",
+    "loading": "Cargando..."
+  },
+  "user": {
+    "title": "PERFIL DE USUARIO",
+    "joined": "REGISTRADO",
+    "changeUsername": "CAMBIAR NOMBRE",
+    "currentUsername": "NOMBRE ACTUAL",
+    "newUsernamePlaceholder": "Nuevo nombre de usuario",
+    "newUsername": "NUEVO NOMBRE",
+    "saveUsername": "GUARDAR NOMBRE",
+    "changePassword": "CAMBIAR CONTRASENA",
+    "currentPassword": "CONTRASENA ACTUAL",
+    "currentPassPlaceholder": "Contrasena actual",
+    "newPassword": "NUEVA CONTRASENA",
+    "newPassPlaceholder": "Nueva contrasena",
+    "confirmPassword": "CONFIRMAR NUEVA CONTRASENA",
+    "confirmPassPlaceholder": "Repetir nueva contrasena",
+    "savePassword": "GUARDAR CONTRASENA",
+    "deleteAccount": "ELIMINAR CUENTA",
+    "deleteWarning": "Esta accion es permanente y no se puede deshacer. Todos tus datos, puntuaciones y logros se perderan para siempre.",
+    "confirmYourPass": "CONFIRMA TU CONTRASENA",
+    "confirmPassPlaceholder2": "Introduce tu contrasena para confirmar",
+    "typeDelete": "ESCRIBE \"DELETE\" PARA CONFIRMAR",
+    "typeDeletePlaceholder": "Escribe DELETE",
+    "deleteBtn": "ELIMINAR CUENTA",
+    "usernameUpdated": "NOMBRE ACTUALIZADO CORRECTAMENTE",
+    "passwordUpdated": "CONTRASENA ACTUALIZADA CORRECTAMENTE",
+    "accountDeleted": "CUENTA ELIMINADA. ADIOS."
+  },
+  "errors": {
+    "invalidUsername": "Formato de nombre de usuario invalido",
+    "emailTaken": "El correo ya esta registrado",
+    "wrongPassword": "Contrasena incorrecta",
+    "passwordShort": "La contrasena debe tener minimo 8 caracteres",
+    "userNotFound": "Usuario no encontrado",
+    "insufficientPoints": "Puntos insuficientes",
+    "alreadyOwned": "Ya tienes este cosmetico",
+    "cosmeticNotFound": "Cosmetico no encontrado",
+    "classicNotBuyable": "El tema Clasico no se puede comprar",
+    "fillAllFields": "Por favor rellena todos los campos",
+    "passwordsNoMatch": "Las contrasenas no coinciden",
+    "enterCurrentPass": "Introduce tu contrasena actual",
+    "enterPassword": "Introduce tu contrasena",
+    "typeDeleteConfirm": "Escribe DELETE para confirmar"
+  },
+  "css": {
+    "--pirate-text": "\"~ ¡Arrr! Guardarse de las Minas Ocultas en estas Malditas Aguas ~\"",
+    "--difficulty": "\"⚔ Dificultad de la travesía ⚔\"",
+    "--cap-leaderboard": "\"⚔ Cuaderno de bitácora ⚔\"",
+    "--hck-difficulty": "\"SELECCION DE MISION\"",
+    "--hck-leaderboard": "\"REGISTRO DE DATOS\"",
+    "--hck-text": "\"[ PROTOCOLO DE MATRIX: ACTIVADO ]\""
+  },
+  "ok": {
+    "cosmeticBought": "Cosmetico comprado",
+    "cosmeticEquipped": "Cosmetico equipado",
+    "passwordUpdated": "Contrasena actualizada",
+    "accountDeleted": "Cuenta eliminada",
+    "achievementUnlocked": "Logro desbloqueado"
+  },
+  "logros": {
+    "incauto": { "nombre": "Incauto", "desc": "Explota por primera vez" },
+    "principiante": {
+      "nombre": "Principiante",
+      "desc": "Completa una partida en facil"
+    },
+    "normalidad": {
+      "nombre": "Normalidad",
+      "desc": "Completa una partida en intermedio"
+    },
+    "experto": {
+      "nombre": "Experto",
+      "desc": "Completa una partida en dificultad dificil"
+    },
+    "velocista": {
+      "nombre": "Velocista",
+      "desc": "Completa una partida en menos de 30s"
+    },
+    "temerario": {
+      "nombre": "Temerario",
+      "desc": "Completa una partida sin marcar casillas"
+    }
+  },
+  "registro": {
+    "faltaCampos": "Rellena todos los campos",
+    "incorrecto": "Email o contraseña incorrectos",
+    "registrado": "El email ya está registrado",
+    "creada": "Cuenta creada, inicia sesión"
+  }
+}

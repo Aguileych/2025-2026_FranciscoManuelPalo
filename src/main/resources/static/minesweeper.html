@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MINESWEEPER</title>
+    <link rel="icon" type="image/png" href="./img/mine.png"/>
+    <link id="theme-stylesheet" rel="stylesheet" href="./css/theme-classic.css" />
+  </head>
+  <body>
+    <header>
+      <div class="dropdown-container">
+        <div class="menu-btn retro-bevel" onclick="toggleDropdown('menuDropdown')">
+          <div class="hamburger-icon">
+            <div class="hamburger-line"></div>
+            <div class="hamburger-line"></div>
+            <div class="hamburger-line"></div>
+          </div>
+          <span class="menu-text">Menu</span>
+        </div>
+        <div id="menuDropdown" class="dropdown-content menu-dropdown">
+          <div class="menu-option retro-bevel"><a href="minesweeper.html"  data-i18n="menu.game">Game</a></div>
+          <div class="menu-option retro-bevel"><a href="achievements.html" data-i18n="menu.achievements">Achievements</a></div>
+          <div class="menu-option retro-bevel"><a href="usuario.html"      data-i18n="menu.user">User</a></div>
+          <div class="menu-option retro-bevel"><a href="shop.html"         data-i18n="menu.shop">Shop</a></div>
+          <div class="menu-option retro-bevel"><a href="historial.html"    data-i18n="menu.history">History</a></div>
+        </div>
+      </div>
+
+      <div class="title-section">
+        <h1>MINESWEEPER</h1>
+        <img src="img/mine.png" alt="" />
+      </div>
+
+      <div class="header-right">
+        <div class="header-btn retro-bevel" onclick="cambiarIdioma()">
+          <img src="img/unionjack.webp" alt="" id="langFlag" />
+          <span class="btn-text" id="langText" data-i18n="header.language">English</span>
+        </div>
+
+        <div class="dropdown-container">
+          <div class="header-btn retro-bevel" onclick="toggleDropdown('loginDropdown')">
+            <img src="img/face.webp" alt="" />
+            <span id="loginBtnText" class="btn-text" data-i18n="header.login">Login</span>
+          </div>
+          <div id="loginDropdown" class="dropdown-content login-dropdown">
+            <div class="login-form active" id="loginForm">
+              <h3 style="text-align:center; margin-bottom:15px; font-size:14px" data-i18n="auth.loginTitle">LOGIN</h3>
+              <input type="email"    id="loginEmail"    class="form-input retro-bevel-inset" data-i18n-placeholder="auth.emailPlaceholder"    placeholder="Email" />
+              <input type="password" id="loginPassword" class="form-input retro-bevel-inset" data-i18n-placeholder="auth.passwordPlaceholder" placeholder="Password" />
+              <p id="loginError" style="color:red; font-size:12px; display:none"></p>
+              <button class="form-button retro-bevel" onclick="login()"                data-i18n="auth.loginBtn">Log in</button>
+              <button class="switch-form-btn"         onclick="switchForm('register')" data-i18n="auth.signupLink">Sign up</button>
+            </div>
+
+            <div class="register-form" id="registerForm">
+              <h3 style="text-align:center; margin-bottom:15px; font-size:14px" data-i18n="auth.registerTitle">Sign in</h3>
+              <input type="email"    id="regEmail"    class="form-input retro-bevel-inset" data-i18n-placeholder="auth.emailRegPlaceholder" placeholder="Correo" />
+              <input type="text"     id="regUsername" class="form-input retro-bevel-inset" data-i18n-placeholder="auth.usernamePlaceholder"  placeholder="Nombre" />
+              <input type="password" id="regPassword" class="form-input retro-bevel-inset" data-i18n-placeholder="auth.passRegPlaceholder"   placeholder="Contraseña" />
+              <p id="regError" style="color:red; font-size:12px; display:none"></p>
+              <button class="form-button retro-bevel" onclick="registro()"           data-i18n="auth.registerBtn">Registrarse</button>
+              <button class="switch-form-btn"         onclick="switchForm('login')"  data-i18n="auth.loginLink">¿Ya tienes cuenta?</button>
+            </div>
+
+            <div id="sessionPanel" style="display:none; padding:16px; text-align:center">
+              <p id="sessionUsername" style="font-weight:bold; margin-bottom:12px"></p>
+              <button class="form-button retro-bevel" onclick="logout()" data-i18n="auth.logout">Cerrar sesión</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <aside class="sidebar retro-bevel-inset">
+        <select class="custom-select retro-bevel-inset" id="themesSelect" onchange="changeTheme(this.value)">
+          <option value="theme-classic.css" data-i18n="game.classic">CLASSIC</option>
+        </select>
+        <div class="difficulty-grid">
+          <button class="difficulty-btn retro-bevel d1" data-i18n="game.easy">EASY</button>
+          <button class="difficulty-btn retro-bevel d2" data-i18n="game.normal">NORMAL</button>
+          <button class="difficulty-btn retro-bevel d3" data-i18n="game.hard">HARD</button>
+        </div>
+      </aside>
+
+      <section class="game-section">
+        <div class="game-panel retro-bevel-static">
+          <div class="game-header retro-bevel-inset">
+            <div id="nMinas" class="counter retro-bevel-inset">099</div>
+            <div class="reset-btn retro-bevel">
+              <img src="img/face.webp" alt="" style="width:100%; height:100%; object-fit:contain" />
+            </div>
+            <div id="contador" class="counter retro-bevel-inset">000</div>
+          </div>
+          <div class="board-container retro-bevel-inset">
+            <div class="tablero" id="tablero" style="grid-template-columns: repeat(18, 20px)"></div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="scoreboard">
+        <div class="score-panel retro-bevel-static">
+          <div class="score-header retro-bevel-inset">
+            <button class="score-filter-btn" id="easy"   onclick="cargarPublico('easy')"   data-i18n="scoreboard.easy">EASY</button>
+            <button class="score-filter-btn" id="normal" onclick="cargarPublico('normal')" data-i18n="scoreboard.normal">NORMAL</button>
+            <button class="score-filter-btn" id="hard"   onclick="cargarPublico('hard')"   data-i18n="scoreboard.hard">HARD</button>
+          </div>
+          <div class="score-list retro-bevel-inset" id="scoreList"></div>
+        </div>
+      </aside>
+    </main>
+
+    <div id="logroToast" class="usr-toast retro-bevel" aria-live="polite" role="status"></div>
+
+    
+    <script src="./js/navegacion.js"></script>
+    <script src="./js/rankingPublico.js"></script>
+    <script src="./js/i18n.js"></script>
+    <script src="./js/login.js"></script>
+    
+    <script>
+      async function cargarTemas() {
+        const usuario = getUsuario();
+        if (!usuario) return;
+
+        const res = await fetch(`/api/usuario-cosmeticos/jugador/${usuario.id}`);
+        const cosmeticosUsuario = await res.json();
+
+        const select = document.getElementById("themesSelect");
+        select.innerHTML = `<option value="theme-classic.css">${t('game.classic')}</option>`;
+
+        const classicActivo =
+          !cosmeticosUsuario.some(uc => uc.equipado) &&
+          (usuario.temaEquipado ?? "theme-classic.css") === "theme-classic.css";
+        select.querySelector("option").selected = classicActivo;
+
+        cosmeticosUsuario.forEach(uc => {
+          const option       = document.createElement("option");
+          option.value       = uc.cosmeticoEstilo;
+          option.textContent = uc.cosmeticoNombre;
+          if (uc.equipado) option.selected = true;
+          select.appendChild(option);
+        });
+      }
+
+      async function changeTheme(estilo) {
+        if (!estilo) return;
+        document.getElementById("theme-stylesheet").href = `./css/${estilo}`;
+        const usuario = getUsuario();
+        if (!usuario) return;
+
+        let body;
+        if (estilo === "theme-classic.css") {
+          body = { jugadorId: usuario.id, estilo };
+        } else {
+          const res = await fetch(`/api/usuario-cosmeticos/jugador/${usuario.id}`);
+          const cosmeticosUsuario = await res.json();
+          const uc = cosmeticosUsuario.find(c => c.cosmeticoEstilo === estilo);
+          if (!uc) return;
+          body = { jugadorId: usuario.id, cosmeticoId: uc.cosmeticoId };
+        }
+
+        const resEquipar = await fetch("/api/usuario-cosmeticos/equipar", {
+          method:  "PUT",
+          headers: { "Content-Type": "application/json" },
+          body:    JSON.stringify(body)
+        });
+
+        const datos = await resEquipar.json();
+        if (resEquipar.ok) {
+          const usuarioActualizado = { ...usuario, temaEquipado: datos.estilo };
+          sessionStorage.setItem("usuario", JSON.stringify(usuarioActualizado));
+        }
+      }
+
+      window.addEventListener("DOMContentLoaded", async () => {
+        await esperarTraducciones();
+        cargarPublico("easy");
+        const usuario = getUsuario();
+        if (usuario) {
+          actualizarHeaderUsuario(usuario);
+          if (usuario.temaEquipado) {
+            document.getElementById("theme-stylesheet").href = `./css/${usuario.temaEquipado}`;
+          }
+          cargarTemas();
+        }
+      });
+    </script>
+    <script src="./js/tablero.js"></script>
+  </body>
+</html>
